@@ -33,12 +33,6 @@ find_library(PAPI_LIBRARIES
 
 
 add_executable(egoHilb ${SOURCE_FILES})
-add_definitions(-DCANOLOOP)
-target_link_libraries(egoHilb ${PAPI_LIBRARIES})
-
-add_executable(egoCano ${SOURCE_FILES})
-target_link_libraries(egoCano ${PAPI_LIBRARIES})
-
 
 # message("MKLROOT is $ENV{MKLROOT}")
 # message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")
