@@ -7,7 +7,7 @@ project(ego2)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES main.cpp hilbertjoin/egojoin.cpp util/arguments.cpp util/dataIo.cpp util/chrisutil.cpp hilbertjoin/hilloop.cpp measure/energy.cpp measure/papicalls.cpp measure/timer.cpp util/allocation.cpp)
+set(SOURCE_FILES main.cpp hilbertjoin/egojoin.cpp util/arguments.cpp util/dataIo.cpp util/chrisutil.cpp hilbertjoin/hilloop.cpp measure/energy.cpp measure/timer.cpp util/allocation.cpp)
 
 #####################
 # build type: Release
@@ -23,14 +23,6 @@ set(CMAKE_CXX_FLAGS  "-std=c++11 -march=knl -mtune=knl -ffast-math -fassociative
 # cmake -DCMAKE_BUILD_TYPE=Debug ..
 # and ignore the warning: "Manually-specified variables were not used by the project: CMAKE_BUID_TYPE"
 set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp")
-
-# papi library
-set(PAPI_PREFIX "/usr/local")
-find_library(PAPI_LIBRARIES
-    # Pick the static library first for easier run-time linking.
-    NAMES libpapi.a papi PATHS ${PAPI_PREFIX}/lib
-)
-
 
 add_executable(egoHilb ${SOURCE_FILES})
 
