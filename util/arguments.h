@@ -8,7 +8,7 @@
 #include <string.h>
 #include <ctype.h>
 
-void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d, size_t *threads, char *filename, bool *isBinary, int *KBLOCK, int *stripes);
+void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d, char *filename, bool *isBinary, int *stripes);
 
 
 #endif //KMEANS_ARGS_H

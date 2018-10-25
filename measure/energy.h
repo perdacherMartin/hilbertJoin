@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SLEEPVAL 10000
+#define SLEEPVAL 100000
 
 class Hioki{
 public:

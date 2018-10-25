@@ -10,10 +10,29 @@
 
 #include "../util/allocation.h"
 #include "../util/chrisutil.h"
+#include "../util/dataIo.h"
+#include "../measure/timer.h"
+#include "../measure/energy.h"
 #include "hilloop.h"
 
+#include <boost/lockfree/queue.hpp>
+#include <boost/atomic.hpp>
 
-// #define KBLOCK 8
+#ifndef KBLOCK
+#define KBLOCK 4
+#endif
+
+#ifndef NUM_THREADS
+#define NUM_THREADS 64
+#endif
+
+#define max(a,b) ((a)>(b) ? (a) : (b))
+#define min(a,b) ((a)<(b) ? (a) : (b))
+
+struct join_pair {
+    size_t p1;
+    size_t p2;
+};
 
 typedef double vec __attribute__((vector_size(64), aligned(64)));
 typedef double vec4 __attribute__((vector_size(32), aligned(32)));
@@ -21,29 +40,36 @@ typedef double vecu __attribute__((vector_size(64)));
 typedef long long veci64 __attribute__((vector_size(64), aligned(64)));
 
 int epsilonGridCompare(const void *a, const void *b);
-void epsilonGridOrdering(size_t n, size_t d, double epsilon, double* array,size_t NUM_THREADS);
-int test_ego_loop3(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, long long *result);
-int test_ego_loop(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, long long *result);
+void epsilonGridOrdering(size_t n, size_t d, double epsilon, double* array);
+int test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long *result);
+int test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *result);
 inline int ceilpowtwo(int m);
 void epsilonGridFillList3(size_t n, size_t d, double epsilon, double * array, int *L1, int *L2, int *L3);
 void epsilonGridCompleteListMax(size_t n, int *list);
 void epsilonGridCompleteListMin(size_t n, int *list);
-static inline void transpose_8xd(size_t n, size_t d, double *EGO_array, size_t NUM_THREADS);
-void prepareStripes(size_t n, size_t d, int numStripes, double epsilon, double *array, int ** lower, int ** upper, double *self, size_t NUM_THREADS);
+static inline void transpose_8xd(size_t n, size_t d, double *EGO_array);
+void prepareStripes(size_t n, size_t d, int numStripes, double epsilon, double *array, int ** lower, int ** upper, double *self);
 static inline long long _mm512_reduce_add_epi64(__m512i a);
-static inline void transpose_dx8(size_t n, size_t d, double *EGO_array, size_t NUM_THREADS);
+static inline void transpose_dx8(size_t n, size_t d, double *EGO_array);
 void omp_qsort (void* l, size_t num, size_t size, int (*compar)(const void*,const void*));
-void test_ego_loop3_long(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK);
-void test_ego_loop3_macro(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK);
+// void test_ego_loop3_macro(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK, double *sorttime);
+void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, size_t *countresult, int stripes, double *sortTime, double *indextime, double *loadpercent);
+// void test_ego_loop3_macro_queue(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK, boost::lockfree::queue<join_pair> &jpartners, double *sorttime);
+int cmp_reorder_dim(const void * a, const void *b);
+void reorder_dimensions(int n, int d, double *array, int *reorder_dim);
+void outputStatistics(int n, int d, double epsilon, double *array, int *reorder_dim);
+void sampleHistograms(int n, int d, double epsilon, double *array, int *reorder_dim);
 
-
-#define swap(i,j) {memcpy(b, (i), size); memcpy((i), (j), size); memcpy((j), b, size);}
-#define max(a,b) ((a)>(b) ? (a) : (b))
-#define min(a,b) ((a)<(b) ? (a) : (b))
+#define hilbert_swap(i,j) {memcpy(b, (i), size); memcpy((i), (j), size); memcpy((j), b, size);}
+#define hilbert_max(a,b) ((a)>(b) ? (a) : (b))
+#define hilbert_min(a,b) ((a)<(b) ? (a) : (b))
 
 extern double EGO_epsilon;
 extern int EGO_d;
 extern int min_size_qsort;
+
+extern long long * costref;
+
 
 #define transposeAVX512(r1,r2,r3,r4,r5,r6,r7,r8){\
             vec r1a = _mm512_castsi512_pd (_mm512_permutex2var_epi64 (_mm512_castpd_si512 (r1), mask1, _mm512_castpd_si512 (r2)));\
@@ -72,13 +98,13 @@ extern int min_size_qsort;
             r8 = _mm512_castsi512_pd (_mm512_permutex2var_epi64 (_mm512_castpd_si512 (r8b), mask6, _mm512_castpd_si512 (r4b)));\
             }
 
-#define EGO_PARALLEL(n,d,epsilon,array,NUM_THREADS) {\
+#define EGO_PARALLEL(n,d,epsilon,array) {\
     size_t EGO_n = (n);\
     EGO_d = (d);\
     EGO_epsilon = (epsilon);\
     double * EGO_array = (array);\
     int stripes = 2;\
-    epsilonGridOrdering(EGO_n, EGO_d, EGO_epsilon, EGO_array,NUM_THREADS);\
+    epsilonGridOrdering(EGO_n, EGO_d, EGO_epsilon, EGO_array);\
     int nn = ceilpowtwo(EGO_n);\
     int **lower = (int **) ddr_alloc (2*sizeof(int*));\
     int **upper = (int **) ddr_alloc (2*sizeof(int*));\
@@ -132,19 +158,24 @@ extern int min_size_qsort;
 
 #define EGO_PREPARE for (int par = 0; par < NUM_THREADS; par++) {
 
-#define EGO_PARALLEL_TRAN(n,d,epsilon,stripes,array,NUM_THREADS) {\
-        size_t EGO_n = (n);\
-        EGO_d = (d);\
-        EGO_epsilon = (epsilon);\
+#define EGO_PARALLEL_TRAN(n,d,epsilon,stripes,array){\
+        int EGO_n = (n);\
+        int EGO_d = (d);\
+        double EGO_epsilon = (epsilon);\
         double * EGO_array = (array);\
         int EGO_blocks = (EGO_d + KBLOCK - 1) / KBLOCK;\
         int EGO_stripes = (stripes);\
-        epsilonGridOrdering(EGO_n, EGO_d, EGO_epsilon, EGO_array,NUM_THREADS);\
+        unsigned long long usedload[NUM_THREADS]; for(int i=0; i<NUM_THREADS; i++) usedload[i]=0ull;\
+        omp_lock_t criticallock; omp_init_lock(&criticallock); int scritical = -1;\
+        CUtilTimer sortTimer;\
+        sortTimer.start();\
+        epsilonGridOrdering(EGO_n, EGO_d, EGO_epsilon, EGO_array);\
+        sortTimer.stop();\
         int nn = ceilpowtwo(EGO_n);\
-        int **lower = (int **) ddr_alloc (EGO_stripes*sizeof(int*));\
-        int **upper = (int **) ddr_alloc (EGO_stripes*sizeof(int*));\
+        int **lower = (int **) malloc (EGO_stripes*sizeof(int*));\
+        int **upper = (int **) malloc (EGO_stripes*sizeof(int*));\
         double *self = callocA64(sizeof (double) * EGO_n * EGO_blocks);\
-        prepareStripes(EGO_n, EGO_d, EGO_stripes, EGO_epsilon, EGO_array, lower, upper, (double *)0, NUM_THREADS);\
+        prepareStripes(EGO_n, EGO_d, EGO_stripes, EGO_epsilon, EGO_array, lower, upper, (double *)0);\
         EGO_epsilon = EGO_epsilon * EGO_epsilon / 2;\
         for (int i=0 ; i<EGO_n ; i++){\
             double h=EGO_epsilon;\
@@ -159,14 +190,23 @@ extern int min_size_qsort;
                 h-=EGO_array[i*EGO_d+j]*EGO_array[i*EGO_d+j];\
             self[(i/8*EGO_blocks+k)*8+i%8]=h/2;\
         }\
-        transpose_8xd(EGO_n, EGO_d, EGO_array,NUM_THREADS);\
+        transpose_8xd(EGO_n, EGO_d, EGO_array);\
+        unsigned long long *sloadcumcum = (unsigned long long *) malloc(EGO_stripes * (n+7)/8 * sizeof(unsigned long long));\
+        sloadcumcum[EGO_stripes-1]=upper[EGO_stripes-1][nn/8]-lower[EGO_stripes-1][nn/8];\
+        for(int s=EGO_stripes-1; s>=0 ; s--)\
+            sloadcumcum[s] = sloadcumcum[s+1] + upper[s][nn/8] - lower[s][nn/8];\
+        for(int i=1; i<(n+7)/8 ; i++)\
+            for(int s=EGO_stripes-1; s>=0 ; s--)\
+                sloadcumcum[i*EGO_stripes+s] = sloadcumcum[(i-1)*EGO_stripes+s] + upper[s][nn/8+i] - lower[s][nn/8+i];\
+        for(int i=0; i<(n+7)/8 ; i++)\
+            for(int s=EGO_stripes-2; s>=0 ; s--)\
+                sloadcumcum[i*EGO_stripes+s] += sloadcumcum[i*EGO_stripes+s+1];\
+        unsigned long long * assignedload = (unsigned long long *) calloc(NUM_THREADS, sizeof (unsigned long long));\
         long long overall_load = 0;\
         for (int i = 0; i < EGO_n / 8; i++)\
             for (int j = 0; j < EGO_stripes; j++)\
                 overall_load += upper[j][i + nn / 8] - lower[j][i + nn / 8];\
-        int loadstart[NUM_THREADS + 2];\
-        for (int i = 0; i <= NUM_THREADS; i++)\
-            loadstart[i] = 0;\
+        int *loadstart = (int *) calloc((NUM_THREADS + 1) * EGO_stripes, sizeof(int));\
         long long cum_load = 0;\
         for (int i = 0; i < EGO_n / 8; i++) {\
             for (int j = 0; j < EGO_stripes; j++)\
@@ -262,27 +302,27 @@ extern int min_size_qsort;
 #define EGO_CONSOLIDATE }}} FGF_HILBERT_END(i, j); }
 
 #define EGO_END    }}
-#define EGO_END_TRAN    }transpose_dx8(EGO_n, EGO_d, EGO_array, NUM_THREADS);}
+#define EGO_END_TRAN    }transpose_dx8(EGO_n, EGO_d, EGO_array);}
 #define EGO_END_RESUME  }
 
 #define EGO_LOOP_TRAN\
-        int imin = loadstart[par];\
-        int imax = loadstart[par + 1];\
-        for (int s = 0; s < EGO_stripes; s++) {\
-            int i = 0;\
-            int j = 0;\
-            register veci64 const1 = _mm512_set1_epi64(1LL) ;\
-            register veci64 const2 = _mm512_add_epi64(const1, const1) ;\
-            register veci64 const3 = _mm512_add_epi64(const1, const2) ;\
-            register veci64 const4 = _mm512_add_epi64(const1, const3) ;\
-            register veci64 const5 = _mm512_add_epi64(const1, const4) ;\
-            register veci64 const6 = _mm512_add_epi64(const1, const5) ;\
-            register veci64 const7 = _mm512_add_epi64(const1, const6) ;\
-            register veci64 const0 = _mm512_setzero_si512();\
-            FGF_HILBERT_FOR(i, j, EGO_n / 8, EGO_n / 8, i >= imin && i < imax && j >= lower[s][i + nn / 8] && j < upper[s][i + nn / 8],\
-                    FURHIL_ub0 >= imin && FURHIL_lb0 < imax &&\
-                    FURHIL_ub1 - 1 >= lower[s][(FURHIL_lb0 >> (FURHIL_clevel + 1))+(nn >> (FURHIL_clevel + 4))] &&\
-                    FURHIL_lb1 < upper[s][((FURHIL_ub0 - 1)>>(FURHIL_clevel + 1))+(nn >> (FURHIL_clevel + 4))]) {\
+    int imin = loadstart[par];\
+    int imax = loadstart[par + 1];\
+    for (int s = 0; s < EGO_stripes; s++) {\
+        int i = 0;\
+        int j = 0;\
+        register veci64 const1 = _mm512_set1_epi64(1LL) ;\
+        register veci64 const2 = _mm512_add_epi64(const1, const1) ;\
+        register veci64 const3 = _mm512_add_epi64(const1, const2) ;\
+        register veci64 const4 = _mm512_add_epi64(const1, const3) ;\
+        register veci64 const5 = _mm512_add_epi64(const1, const4) ;\
+        register veci64 const6 = _mm512_add_epi64(const1, const5) ;\
+        register veci64 const7 = _mm512_add_epi64(const1, const6) ;\
+        register veci64 const0 = _mm512_setzero_si512();\
+        FGF_HILBERT_FOR(i, j, EGO_n / 8, EGO_n / 8, i >= imin && i < imax && j >= lower[s][i + nn / 8] && j < upper[s][i + nn / 8],\
+                FURHIL_ub0 >= imin && FURHIL_lb0 < imax &&\
+                FURHIL_ub1 - 1 >= lower[s][(FURHIL_lb0 >> (FURHIL_clevel + 1))+(nn >> (FURHIL_clevel + 4))] &&\
+                FURHIL_lb1 < upper[s][((FURHIL_ub0 - 1)>>(FURHIL_clevel + 1))+(nn >> (FURHIL_clevel + 4))]) {\
                 register vec vi = _mm512_load_pd(self + i * 8 * EGO_blocks);\
                 register vec vj = _mm512_load_pd(self + j * 8 * EGO_blocks);\
                 register vec sum1 = vi + _mm512_permutexvar_pd(const0, vj);\
@@ -304,48 +344,48 @@ extern int min_size_qsort;
                 sum7 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const6, vj), sum7);\
                 sum8 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const7, vj), sum8);\
                 int k; for (k=1 ; k<d ; k++){\
-                    if(k % KBLOCK == 0 && k > KBLOCK){\
-                        register veci64 allind = _mm512_srli_epi64(_mm512_castpd_si512(sum1), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum2), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum3), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum4), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum5), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum6), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum7), 63);\
-                        allind += _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63);\
-                        if(_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
-                        vi = _mm512_load_pd(self + (i * EGO_blocks + k/KBLOCK) * 8);\
-                        vj = _mm512_load_pd(self + (j * EGO_blocks + k/KBLOCK) * 8);\
-                        sum1 += vi + _mm512_permutexvar_pd(const0, vj);\
-                        sum2 += vi + _mm512_permutexvar_pd(const1, vj);\
-                        sum3 += vi + _mm512_permutexvar_pd(const2, vj);\
-                        sum4 += vi + _mm512_permutexvar_pd(const3, vj);\
-                        sum5 += vi + _mm512_permutexvar_pd(const4, vj);\
-                        sum6 += vi + _mm512_permutexvar_pd(const5, vj);\
-                        sum7 += vi + _mm512_permutexvar_pd(const6, vj);\
-                        sum8 += vi + _mm512_permutexvar_pd(const7, vj);\
-                    }\
-                    vi = _mm512_load_pd(EGO_array + (EGO_d * i + k) * 8);\
-                    vj = _mm512_load_pd(EGO_array + (EGO_d * j + k) * 8);\
-                    sum1 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const0, vj), sum1);\
-                    sum2 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const1, vj), sum2);\
-                    sum3 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const2, vj), sum3);\
-                    sum4 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const3, vj), sum4);\
-                    sum5 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const4, vj), sum5);\
-                    sum6 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const5, vj), sum6);\
-                    sum7 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const6, vj), sum7);\
-                    sum8 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const7, vj), sum8);\
+                if(k % KBLOCK == 0 && k > KBLOCK){\
+                    register veci64 allind = _mm512_srli_epi64(_mm512_castpd_si512(sum1), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum2), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum3), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum4), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum5), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum6), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum7), 63);\
+                    allind += _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63);\
+                    if(_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
+                    vi = _mm512_load_pd(self + (i * EGO_blocks + k/KBLOCK) * 8);\
+                    vj = _mm512_load_pd(self + (j * EGO_blocks + k/KBLOCK) * 8);\
+                    sum1 += vi + _mm512_permutexvar_pd(const0, vj);\
+                    sum2 += vi + _mm512_permutexvar_pd(const1, vj);\
+                    sum3 += vi + _mm512_permutexvar_pd(const2, vj);\
+                    sum4 += vi + _mm512_permutexvar_pd(const3, vj);\
+                    sum5 += vi + _mm512_permutexvar_pd(const4, vj);\
+                    sum6 += vi + _mm512_permutexvar_pd(const5, vj);\
+                    sum7 += vi + _mm512_permutexvar_pd(const6, vj);\
+                    sum8 += vi + _mm512_permutexvar_pd(const7, vj);\
                 }\
-                if(k<=d){{\
-                    if (i==j){\
-                        sum1 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum1), 255, 0xbff0000000000000ull));\
-                        sum2 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum2), 254, 0xbff0000000000000ull));\
-                        sum3 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum3), 252, 0xbff0000000000000ull));\
-                        sum4 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum4), 248, 0xbff0000000000000ull));\
-                        sum5 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum5), 240, 0xbff0000000000000ull));\
-                        sum6 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum6), 224, 0xbff0000000000000ull));\
-                        sum7 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum7), 192, 0xbff0000000000000ull));\
-                        sum8 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum8), 128, 0xbff0000000000000ull));\
-                    }
+                vi = _mm512_load_pd(EGO_array + (EGO_d * i + k) * 8);\
+                vj = _mm512_load_pd(EGO_array + (EGO_d * j + k) * 8);\
+                sum1 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const0, vj), sum1);\
+                sum2 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const1, vj), sum2);\
+                sum3 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const2, vj), sum3);\
+                sum4 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const3, vj), sum4);\
+                sum5 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const4, vj), sum5);\
+                sum6 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const5, vj), sum6);\
+                sum7 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const6, vj), sum7);\
+                sum8 = _mm512_fmadd_pd(vi, _mm512_permutexvar_pd(const7, vj), sum8);\
+            }\
+            if(k<=d){{\
+                if (i==j){\
+                    sum1 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum1), 255, 0xbff0000000000000ull));\
+                    sum2 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum2), 254, 0xbff0000000000000ull));\
+                    sum3 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum3), 252, 0xbff0000000000000ull));\
+                    sum4 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum4), 248, 0xbff0000000000000ull));\
+                    sum5 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum5), 240, 0xbff0000000000000ull));\
+                    sum6 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum6), 224, 0xbff0000000000000ull));\
+                    sum7 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum7), 192, 0xbff0000000000000ull));\
+                    sum8 = _mm512_castsi512_pd(_mm512_mask_set1_epi64(_mm512_castpd_si512(sum8), 128, 0xbff0000000000000ull));\
+                }
 
 #endif
