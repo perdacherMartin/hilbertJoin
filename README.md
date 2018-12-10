@@ -1,4 +1,4 @@
-# CMake project
+# Build with CMake
 
 to build this project you need to type the following commands into your shell:
 
