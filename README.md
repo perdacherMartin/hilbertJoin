@@ -5,7 +5,7 @@
 
 To explicitly ensure, that CMake will use the GNU compiler use:
 
-```{shell, engine='sh'}
+```{bash, engine='sh'}
 export CXX=g++
 export CC=gcc
 ```
@@ -14,7 +14,7 @@ export CC=gcc
 
 to build this project you need to type the following commands into your shell:
 
-```{shell, engine='sh'}
+```{bash, engine='sh'}
 git clone https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJoin.git
 cd hilbertJoin
 mkdir build
