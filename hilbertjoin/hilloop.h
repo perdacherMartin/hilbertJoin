@@ -1,9 +1,3 @@
-/*
- * File:   hilloop.h
- * Author: boehm
- *
- * Created on 11. März 2016, 10:49
- */
 
 #ifndef HILLOOP_H
 #define	HILLOOP_H
