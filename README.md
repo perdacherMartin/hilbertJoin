@@ -1,3 +1,16 @@
+
+# Requirements
+
+- To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
+- GNU compiler version >= 5.1
+
+To explicitly ensure, that CMake will use the GNU compiler use:
+
+```{bash}
+export CXX=g++
+export CC=gcc
+```
+
 # Build with CMake
 
 to build this project you need to type the following commands into your shell:
