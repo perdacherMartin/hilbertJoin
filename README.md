@@ -22,3 +22,12 @@ cd build
 cmake ..
 make -j
 ```
+
+# Parameters
+
+There are two different parameters KBLOCK and STRIPES, where we tried out different strategies. 
+In our final experiments (see paper) we _always_ use the following setting:
+
+- KBLOCK=2
+- STRIPES=14
+
