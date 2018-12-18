@@ -3,7 +3,7 @@
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
 - GNU compiler version >= 5.1
  
-## AVX-512 instructions
+### AVX-512 instructions
 
 - If we apply our Hilbert-curve, auto-vectorization will get eliminated, nevertheless we belive that future compilers will profit from the locality assumptions in the Hilbert curve.
 
