@@ -33,4 +33,4 @@ In our final experiments (see paper) we _always_ use the following setting:
 
 # Freqeuntly Asked Quesionts
 
-(see FAQ)[FAQ.md]
+[see FAQ](FAQ.md)
