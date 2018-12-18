@@ -2,10 +2,6 @@
 
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
 - GNU compiler version >= 5.1
- 
-### AVX-512 instructions
-
-- If we apply our Hilbert-curve in Intel or GNU compilers, auto-vectorization will get eliminated. Nevertheless, we belive that future compilers will profit from the locality assumptions of the Hilbert curve.
 
 To explicitly ensure, that CMake will use the GNU compiler use:
 
@@ -35,3 +31,6 @@ In our final experiments (see paper) we _always_ use the following setting:
 - KBLOCK=2
 - STRIPES=14
 
+# Freqeuntly Asked Quesionts
+
+(see FAQ)[FAQ.md]
