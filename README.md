@@ -30,7 +30,7 @@ make -j
 There are two different parameters KBLOCK and STRIPES, where we tried out different strategies. 
 In our final experiments (see paper) we _always_ use the following setting:
 
-- KBLOCK=2
+- KBLOCK=4
 - STRIPES=14
 
 # Freqeuntly Asked Quesionts
