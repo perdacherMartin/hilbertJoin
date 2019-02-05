@@ -1,3 +1,5 @@
+Accepted for [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June to 5th of July.
+
 # Requirements
 
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
