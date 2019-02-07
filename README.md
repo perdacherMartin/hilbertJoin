@@ -28,9 +28,9 @@ make -j
 # Parameters
 
 There are two different parameters KBLOCK and STRIPES, where we tried out different strategies. 
-In our final experiments (see paper) we _always_ use the following setting:
+In our experiments (see paper) we _always_ use the following setting:
 
-- KBLOCK=4
+- KBLOCK=16
 - STRIPES=14
 
 # Freqeuntly Asked Quesionts
