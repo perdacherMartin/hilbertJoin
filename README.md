@@ -22,7 +22,7 @@ cd hilbertJoin
 mkdir build
 cd build
 export KBLOCK=4
-export NUM_THREADS=_MAX_NUMBER_OF_CORES__
+export NUM_THREADS=_MAX_NUMBER_OF_CORES_
 cmake ..
 make -j
 ```
