@@ -30,8 +30,13 @@ make -j
 There are two different parameters KBLOCK and STRIPES, where we tried out different strategies. 
 In our experiments (see paper) we _always_ use the following setting:
 
-- KBLOCK=16
+- KBLOCK=4
 - STRIPES=14
+
+For uniform data we suggest to use the following parameter settings:
+
+- KBLOCK=16
+- STRIPES=1
 
 # Freqeuntly Asked Quesionts
 
