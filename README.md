@@ -21,6 +21,8 @@ git clone https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJoin.git
 cd hilbertJoin
 mkdir build
 cd build
+export KBLOCK=4
+export NUM_THREADS=_MAX_NUMBER_OF_CORES__
 cmake ..
 make -j
 ```
@@ -37,6 +39,7 @@ For uniform data we suggest to use the following parameter settings:
 
 - KBLOCK=16
 - STRIPES=1
+
 
 # Freqeuntly Asked Quesionts
 
