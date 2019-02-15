@@ -29,6 +29,9 @@ cmake ..
 make -j
 ```
 
+# Issues
+
+Feel free to report issues the code.
 
 # Freqeuntly Asked Quesionts
 
