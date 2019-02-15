@@ -6,7 +6,7 @@ There are two parameters, _KBLOCK_ and _stripes_. You can vary and play with the
 _Why do you use AVX-512 instructions?_
 If we apply our Hilbert-curve in Intel or GNU compilers, auto-vectorization will get eliminated. Writing code with AVX instructions simulates the behaviour of having an implemented auto-vectorized approach. Nevertheless, we belive that future compilers will profit from the locality assumptions of the Hilbert curve.
 
-_What are the Parameters KBLOCK and STRIPES used for?_
+_What are the Parameters KBLOCK and STRIPES?_
 
 - KBLOCK: check after KBLOCK dimensions, whether the $\varepsilon$ distance is already exeeded. 
 - STRIPES: How many EGO-Stripes are used. See Section 2.2 ``Determining the bounds''. 
