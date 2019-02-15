@@ -31,7 +31,7 @@ make -j
 
 # Issues
 
-Feel free to report issues the code.
+Feel free to report issues about the code.
 
 # Freqeuntly Asked Quesionts
 
