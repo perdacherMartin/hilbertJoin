@@ -13,6 +13,7 @@ _What are the Parameters KBLOCK and STRIPES?_
 
 _How to set KBLOCK and STRIPES?_
 
+KBLOCK should be smaller then the dimension of the dataset. Best fitting values for stripes are: $`1,2,5,14,41 (=((3^j)+1)/2)`$
 In our experiments (see paper) we _always_ use the following setting:
 - KBLOCK=4
 - STRIPES=14
