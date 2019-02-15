@@ -31,7 +31,7 @@ make -j
 
 # Issues
 
-Feel free to report issues about the code.
+Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJoin/issues) about the code.
 
 # Freqeuntly Asked Quesionts
 
