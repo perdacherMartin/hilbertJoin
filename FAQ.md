@@ -9,7 +9,7 @@ If we apply our Hilbert-curve in Intel or GNU compilers, auto-vectorization will
 _What are the Parameters KBLOCK and STRIPES?_
 
 - KBLOCK: check after KBLOCK dimensions, whether the $`\varepsilon`$-distance is already exeeded. 
-- STRIPES: How many EGO-Stripes are used. See Section "2.2. Determining the bounds" in our paper. 
+- STRIPES: How many EGO-Stripes are used. See Section _"2.2. Determining the bounds"_ in our paper. 
 
 _How to set KBLOCK and STRIPES?_
 
