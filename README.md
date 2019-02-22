@@ -29,6 +29,19 @@ cmake ..
 make -j
 ```
 
+# Datasets used in our publication
+
+#### Synthetic data (as comma seperated files)
+
+- [Uniform_200K](https://ucloud.univie.ac.at/index.php/s/LaPLUmXQKsldvcO)
+- [Uniform_select](https://ucloud.univie.ac.at/index.php/s/pUPFeZDXGtGNEpa)
+
+#### Real data
+- [BigCross](https://ucloud.univie.ac.at/index.php/s/ITlAQkZfIGFTvTD)
+- [Activity recognition]() from UCI Data Repository
+- [Higgs]() from UCI Data Repository
+- [IoT botnet]() from UCI Data Repository
+
 # Issues
 
 Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJoin/issues) about the code.
