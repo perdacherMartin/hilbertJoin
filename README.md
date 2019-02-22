@@ -52,10 +52,10 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
 
 # References
 
-- [1] Allan Stisen, Henrik Blunck, Sourav Bhattacharya, Thor Siiger Prentow, Mikkel Baun Kjærgaard, Anind K. Dey, Tobias Sonne, Mads Møller Jensen:
+[1] Allan Stisen, Henrik Blunck, Sourav Bhattacharya, Thor Siiger Prentow, Mikkel Baun Kjærgaard, Anind K. Dey, Tobias Sonne, Mads Møller Jensen:
 Smart Devices are Different: Assessing and MitigatingMobile Sensing Heterogeneities for Activity Recognition. SenSys 2015: 127-140
-- [2] Marcel R. Ackermann, Marcus Märtens, Christoph Raupach, Kamil Swierkot, Christiane Lammersen, Christian Sohler:
+[2] Marcel R. Ackermann, Marcus Märtens, Christoph Raupach, Kamil Swierkot, Christiane Lammersen, Christian Sohler:
 StreamKM++: A clustering algorithm for data streams. ACM Journal of Experimental Algorithmics 17(1) (2012)
-- [3] P. Baldi, P. Sadowski, and D. Whiteson. 2014. Searching for exotic particles in high-energy physics with deep learning. Nature Commu- nications 5 (02 Jul 2014), 4308 EP –. Article.
-- [4] Yisroel Mirsky, Tomer Doitshman, Yuval Elovici, and Asaf Shabtai. 2018. Kitsune: An Ensemble of Autoencoders for Online Network Intrusion Detection. In 25th Annual Network and Distributed System Security Symposium, NDSS 2018, San Diego, California, USA, February 18-21, 2018.
+[3] P. Baldi, P. Sadowski, and D. Whiteson. 2014. Searching for exotic particles in high-energy physics with deep learning. Nature Commu- nications 5 (02 Jul 2014), 4308 EP –. Article.
+[4] Yisroel Mirsky, Tomer Doitshman, Yuval Elovici, and Asaf Shabtai. 2018. Kitsune: An Ensemble of Autoencoders for Online Network Intrusion Detection. In 25th Annual Network and Distributed System Security Symposium, NDSS 2018, San Diego, California, USA, February 18-21, 2018.
 
