@@ -38,9 +38,9 @@ make -j
 
 #### Real data
 - [BigCross](https://ucloud.univie.ac.at/index.php/s/ITlAQkZfIGFTvTD) see [[2]](https://doi.org/10.1145/2133803.2184450)
-- [Activity recognition]() see [[1]](https://doi.org/10.1145/2809695.2809718) from UCI Data Repository
-- [Higgs]() see [[3]](https://www.nature.com/articles/ncomms5308) from UCI Data Repository 
-- [IoT botnet]() see [[4]](http://wp.internetsociety.org/ndss/wp-content/uploads/sites/25/2018/02/ndss2018_03A-3_Mirsky_paper.pdf) from UCI Data Repository 
+- [Activity recognition](http://archive.ics.uci.edu/ml/datasets/heterogeneity+activity+recognition) see [[1]](https://doi.org/10.1145/2809695.2809718) from UCI Data Repository
+- [Higgs](https://archive.ics.uci.edu/ml/datasets/HIGGS) see [[3]](https://www.nature.com/articles/ncomms5308) from UCI Data Repository 
+- [IoT botnet](https://archive.ics.uci.edu/ml/datasets/detection_of_IoT_botnet_attacks_N_BaIoT) see [[4]](http://wp.internetsociety.org/ndss/wp-content/uploads/sites/25/2018/02/ndss2018_03A-3_Mirsky_paper.pdf) from UCI Data Repository 
 
 # Issues
 
