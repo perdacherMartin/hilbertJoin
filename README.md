@@ -50,6 +50,10 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
 
 [see FAQ](FAQ.md)
 
+# Comparison partners
+
+- [BLAS-join](https://gitlab.cs.univie.ac.at/Google-TPU/BLAS-join/)
+
 # References
 
 - [1] Allan Stisen, Henrik Blunck, Sourav Bhattacharya, Thor Siiger Prentow, Mikkel Baun Kjærgaard, Anind K. Dey, Tobias Sonne, Mads Møller Jensen:
