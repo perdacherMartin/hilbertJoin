@@ -13,11 +13,11 @@ _What are the Parameters KBLOCK and STRIPES?_
 
 _How to set KBLOCK and STRIPES?_
 
-KBLOCK should be smaller then the dimension of the dataset. Best fitting values for stripes are: $`1,2,5,14,41 (=((3^j)+1)/2)`$.
+KBLOCK should be smaller then the dimension of the dataset. We check after KBLOCK dimensions whether we have exceeded $`\varepsilon^2`$ or not. Best fitting values for active dimesnions are $`0,1,2,3,4,5`$ which corresponds to $`1,2,5,14,41 (=((3^j)+1)/2)`$ stripes, (for more details see paper Section 3.1 "Determination of the Bounds")
 
 In our experiments (see paper) we _always_ use the following setting:
 - KBLOCK=4
-- active dimensions=3, which are exactly 14 stripes (see paper Section 3.1 "Determination of the Bounds")
+- active dimensions=3, which are exactly 14 stripes
 
 For uniform data we suggest to use the following parameter settings:
 - KBLOCK=16
