@@ -25,12 +25,4 @@
 void * ddr_alloc(size_t bytes);
 void ddr_free(void * ptrs);
 
-void ** ompx_ddr_calloc(size_t bytes);
-void ompx_ddr_free(void ** ptrs);
-
-void ompx_hbm_errcode_check(int errcode);
-void ** ompx_hbm_calloc(size_t bytes);
-void ompx_hbm_free(void ** ptrs);
-
-
 #endif

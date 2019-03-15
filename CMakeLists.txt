@@ -5,8 +5,6 @@ project(ego2)
 # export CC=/opt/gcc6.1.0/usr/local/bin/gcc
 # export CXX=/opt/gcc6.1.0/usr/local/bin/g++
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
 set(SOURCE_FILES main.cpp hilbertjoin/egojoin.cpp util/arguments.cpp util/dataIo.cpp util/chrisutil.cpp hilbertjoin/hilloop.cpp measure/energy.cpp measure/timer.cpp util/allocation.cpp)
 
 #####################
@@ -14,17 +12,49 @@ set(SOURCE_FILES main.cpp hilbertjoin/egojoin.cpp util/arguments.cpp util/dataIo
 #####################
 
 # set(CMAKE_CXX_FLAGS  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O3 -DNDDEBUG -fopenmp")
-set(CMAKE_CXX_FLAGS  "-std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -DNDDEBUG -fopenmp -lmemkind")
 
+# adding MKL include directory
+include_directories($ENV{MKLROOT}/include)
+
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lboost_system")
+
+# xeon-phi
+link_directories($ENV{MKLROOT}/lib/intel64)
+
+include_directories($ENV{BOOST_HOME}/include/boost)
+link_directories($ENV{BOOST_HOME}/lib)
+
+# mkl libraries
+find_library ( mkl_lp64_LIB NAMES libmkl_intel_lp64.a
+        PATHS $ENV{MKLROOT} PATH_SUFFIXES lib)
+find_library ( mkl_core_LIB NAMES libmkl_core.a
+        PATHS $ENV{MKLROOT} PATH_SUFFIXES lib)
+find_library ( mkl_thread_LIB NAMES libmkl_intel_thread.a
+        PATHS $ENV{MKLROOT} PATH_SUFFIXES lib)
+find_library ( mkl_omp_LIB NAMES libiomp5.a
+        PATHS $ENV{MKLROOT} PATH_SUFFIXES lib)
 
 ####################
 # build type: Debug
 ####################
 # cmake -DCMAKE_BUILD_TYPE=Debug ..
 # and ignore the warning: "Manually-specified variables were not used by the project: CMAKE_BUID_TYPE"
-set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp")
+set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lboost_system -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
 
-add_executable(egoHilb ${SOURCE_FILES})
+
+# add_executable(egoHilb ${SOURCE_FILES})
+add_executable(egoHilbCountOnly ${SOURCE_FILES})
+target_compile_definitions(egoHilbCountOnly PRIVATE -DCOUNT_ONLY)
+# target_compile_definitions(egoHilbCountOnly PRIVATE -DOUTPUT)
+
+if ($ENV{KBLOCK})
+    target_compile_definitions(egoHilbCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
+endif()
+
+if ($ENV{OMP_NUM_THREADS})
+    target_compile_definitions(egoHilbCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+endif()
+
 
 # message("MKLROOT is $ENV{MKLROOT}")
 # message("CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}")

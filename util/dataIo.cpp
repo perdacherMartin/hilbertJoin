@@ -1,6 +1,37 @@
 
 #include "dataIo.h"
 
+void random_init_unif(double *array, const int N, const int D, const int INIT_SEED){
+    #pragma omp parallel
+    {
+        const int ME = omp_get_thread_num();
+        const int ALL_THREADS = omp_get_num_threads();
+        VSLStreamStatePtr stream;
+        const int SEED=(ME + 15) * INIT_SEED;
+        const double LOWER_BOUND=0.0;
+        const double UPPER_BOUND=1.0;
+
+        int errcode = vslNewStream( &stream, VSL_BRNG_MCG31, SEED);
+
+        if ( errcode != VSL_ERROR_OK && errcode != VSL_STATUS_OK ){
+            printf("vslNewStream error. dataIo.cpp line 9.\n");
+            exit(1);
+        }
+
+        const int imin = (N / ALL_THREADS) * ME;
+        const int imax = (ME == ALL_THREADS - 1 ) ? N : (N / ALL_THREADS) * (ME+1);
+        const int MY_N = imax - imin;
+
+        errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, MY_N * D, &array[imin*D], LOWER_BOUND, UPPER_BOUND);
+
+        if ( errcode != VSL_ERROR_OK && errcode != VSL_STATUS_OK ){
+            printf("vslNewStream error. dataIo.cpp line 24.\n");
+            exit(1);
+        }
+
+    }
+}
+
 void random_init(double *array, const int N, const int D){
     short unsigned seed[3];
     int i;
