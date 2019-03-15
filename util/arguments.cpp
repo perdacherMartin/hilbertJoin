@@ -35,7 +35,7 @@ void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d,
                 *epsilon = atof(optarg);
                 break;
             case 's':
-                *stripes = atoi(optarg);
+                *activedims = atoi(optarg);
                 break;
             case 'f':
                 strcpy(filename, optarg);
@@ -114,7 +114,7 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
                 *epsilon = atof(optarg);
                 break;
             case 's':
-                *stripes = atoi(optarg);
+                *activedims = atoi(optarg);
                 break;
             case 'f':
                 strcpy(filename, optarg);
@@ -155,6 +155,6 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
   if ( *activedims < 0 || *activedims > 6 ){
     fprintf(stderr, "parameter active dimensions is typical in the range of [0-5]\n");
     exit(1);
-  }  
+  }
 
 }

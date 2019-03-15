@@ -404,8 +404,11 @@ extern long long * costref;
     int EGO_stripes = 1; for(int i=0; i<EGO_activedim; i++) EGO_stripes*=3;\
     unsigned long long usedload[NUM_THREADS]; for(int i=0; i<NUM_THREADS; i++) usedload[i]=0ull;\
     omp_lock_t criticallock; omp_init_lock(&criticallock); int scritical = -1;\
+    CUtilTimer sortTimer;\
+    sortTimer.start();\
     epsilonGridOrdering(EGO_nA, EGO_d, EGO_epsilon, EGO_arrayA);\
     epsilonGridOrdering(EGO_nB, EGO_d, EGO_epsilon, EGO_arrayB);\
+    sortTimer.stop();\
     int nn = ceilpowtwo(EGO_nA);\
     int **lower = (int **) malloc (EGO_stripes*sizeof(int*));\
     int **upper = (int **) malloc (EGO_stripes*sizeof(int*));\

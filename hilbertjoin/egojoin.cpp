@@ -839,7 +839,7 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
 }
 
 int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent){
-    CUtilTimer index_timer,total_timer;
+    CUtilTimer index_timer,total_timer,sortTimer;
     long long result = 0;
     long long refinements = 0;
     unsigned long long savedload[5*NUM_THREADS];
@@ -863,7 +863,7 @@ int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const d
        *indextime = index_timer.get_time() - sortTimer.get_time();
        *sortTime = sortTimer.get_time();
 
-       *loadpercent = (double)overall_load/n/(n-1)*128;
+       *loadpercent = ((double)overall_load/(nA/8)/(nA/8-1)*200);
        #pragma omp parallel for proc_bind(close) reduction(+:result) reduction(+:refinements)
     EGO_PREPARE
         veci64 resultvec = _mm512_setzero_si512();
