@@ -1,7 +1,7 @@
 ### AVX-512 instructions
 
 _What is the correct setting of parameters for uniform distributed data?_
-There are two parameters, _KBLOCK_ and _stripes_. You can vary and play with them, but throughout our experiments we have always used _KBLOCK=4_ and _stripes=14_ which are the default settings for any kind of distribution. For uniform distributed data _KBLOCK=16_ is faster, but the variation of _stripes_ has no effect. 
+There are two parameters, _KBLOCK_ and _stripes_. Throughout our experiments we have always used _KBLOCK=4_ and _stripes=14_ which are the default settings for any kind of distribution. For uniform distributed data _KBLOCK=16_ is faster, but the variation of _stripes_ has no effect. 
 
 _Why do you use AVX-512 instructions?_
 If we apply our Hilbert-curve in Intel or GNU compilers, auto-vectorization will get eliminated. Writing code with AVX instructions simulates the behaviour of having an implemented auto-vectorized approach. Nevertheless, we belive that future compilers will profit from the locality assumptions of the Hilbert curve.
@@ -13,11 +13,13 @@ _What are the Parameters KBLOCK and STRIPES?_
 
 _How to set KBLOCK and STRIPES?_
 
-KBLOCK should be smaller then the dimension of the dataset. Best fitting values for stripes are: $`1,2,5,14,41 (=((3^j)+1)/2)`$.
+KBLOCK should be smaller then the dimension of the dataset. Within our distance calculation, we check after KBLOCK dimensions whether we have exceeded $`\varepsilon^2`$ or not. 
+
+Best fitting values for active dimesnions are $`0,1,2,3,4,5`$ which corresponds to $`1,2,5,14,41 (=((3^j)+1)/2)`$ stripes, (for more details see paper Section 3.1 "Determination of the Bounds")
 
 In our experiments (see paper) we _always_ use the following setting:
 - KBLOCK=4
-- STRIPES=14
+- active dimensions=3, which are exactly 14 stripes
 
 For uniform data we suggest to use the following parameter settings:
 - KBLOCK=16
