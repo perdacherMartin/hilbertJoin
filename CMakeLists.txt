@@ -5,7 +5,10 @@ project(ego2)
 # export CC=/opt/gcc6.1.0/usr/local/bin/gcc
 # export CXX=/opt/gcc6.1.0/usr/local/bin/g++
 
-set(SOURCE_FILES main.cpp hilbertjoin/egojoin.cpp util/arguments.cpp util/dataIo.cpp util/chrisutil.cpp hilbertjoin/hilloop.cpp measure/energy.cpp measure/timer.cpp util/allocation.cpp)
+set(UTIL_SOURCES util/dataIo.cpp util/arguments.cpp util/allocation.cpp measure/energy.cpp measure/timer.cpp util/chrisutil.cpp)
+
+set(SOURCE_FILES_SELF main.cpp hilbertjoin/egojoin.cpp hilbertjoin/hilloop.cpp ${UTIL_SOURCES})
+set(SOURCE_FILES_JOIN mainJoin.cpp hilbertjoin/egojoin.cpp hilbertjoin/hilloop.cpp ${UTIL_SOURCES})
 
 #####################
 # build type: Release
@@ -43,16 +46,22 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -
 
 
 # add_executable(egoHilb ${SOURCE_FILES})
-add_executable(egoHilbCountOnly ${SOURCE_FILES})
-target_compile_definitions(egoHilbCountOnly PRIVATE -DCOUNT_ONLY)
-# target_compile_definitions(egoHilbCountOnly PRIVATE -DOUTPUT)
+add_executable(hilbertJoinCountOnly ${SOURCE_FILES_JOIN})
+add_executable(hilbertSelfJoinCountOnly ${SOURCE_FILES_SELF})
+
+target_compile_definitions(hilbertJoinCountOnly PRIVATE -DCOUNT_ONLY)
+target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DCOUNT_ONLY)
+# target_compile_definitions(hilbertJoinCountOnly PRIVATE -DOUTPUT)
+# target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DOUTPUT)
 
 if ($ENV{KBLOCK})
-    target_compile_definitions(egoHilbCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
 endif()
 
 if ($ENV{OMP_NUM_THREADS})
-    target_compile_definitions(egoHilbCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
 endif()
 
 

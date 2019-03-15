@@ -1,6 +1,6 @@
 
-// main method for self-join
-// for a two-set join see mainJoin.cpp
+// main method for a join with two sets
+// for a self-join version see main.cpp
 
 #include <stdio.h>
 #include <string.h>
@@ -32,11 +32,13 @@ int consumer(boost::lockfree::queue<join_pair> &queue)
 #endif
 
 int main(int argc, char** argv) {
-    size_t n = 4000000;
-    size_t d = 41;
+    size_t n = 200000;
+    size_t m = 200000;
+    size_t d = 64;
     size_t threads=64;
     double epsilon = 0.034;
     char filename[256] = "";
+    char filename2[256] = "";
     bool isBinary=false;
     CUtilTimer timer, algtimer;
     Hioki pmeter;
@@ -47,42 +49,34 @@ int main(int argc, char** argv) {
     double sortTime=0.0, reorderTime=0.0, indexTime=0.0, watthours=0.0,totaltime=0.0,algtime=0.0;
     double loadpercent=0.0;
 
-    parsing_args(argc, argv, &n, &epsilon, &d, filename, &isBinary, &actdim);
+    parsing_args_join(argc, argv, &n, &m, &epsilon, &d, filename, filename2, &isBinary,&actdim);
 
     stripes = ((int)pow(3,actdim) + 1) / 2;
     omp_set_num_threads(NUM_THREADS);
     int *reorder_dim=(int*) malloc ((d+8)*sizeof(int));
-// #ifndef COUNT_ONLY
-//     printf("COUNT_ONLY is not defined.");
-// #endif
-//
-// #ifdef COUNT_ONLY
-//     printf("COUNT_ONLY is defined.");
-// #endif
-    // printf("Using %d threads!\n", NUM_THREADS);
 
-    // omp_set_num_threads(threads);
-    // double * array = (double*) mallocA64((n+7)/8*8 * sizeof (double) * d + 16384);
-    // double * array = (double*) mallocA64(n * sizeof (double) * d + 16384);
-    // double * array = (double*) ddr_alloc((n+7)/8*8 * sizeof(double) * d + 16384);
-    double * array = (double*) ddr_alloc(n * sizeof (double) * d + 16384);
-    // printf("alloc ok\n"); fflush(stdout);
-    read_file(array, n, d, filename, isBinary);
-    // printf("readfile ok\n"); fflush(stdout);
+    double *x1 = (double*) ddr_alloc(n * sizeof (double) * d + 16384);
+    double *x2 = (double*) ddr_alloc(m * sizeof (double) * d + 16384);
 
-    // for ( int i=0 ; i < 10 ; i++ ){
-    //     for ( int j=0 ; j < d ; j++ ){
-    //         printf("%f, ", array[i*d+j]);
-    //     }
-    //     printf("\n");
-    // }
+    if ( strcmp(filename,"" ) == 0) {
+        random_init_unif(x1,n,d,1);
+    }else{
+        read_file(x1, n, d, filename, isBinary);
+    }
 
-    pmeter.reset(); pmeter.start();
+    if ( strcmp(filename2,"" ) == 0) {
+        random_init_unif(x2,m,d,2);
+    }else{
+        read_file(x2, m, d, filename, isBinary);
+    }
+
+    // pmeter.reset(); pmeter.start();
     timer.start();
 
-    outputStatistics(n, d, epsilon, array, reorder_dim);
+    outputStatistics(n, d, epsilon, x1, reorder_dim);
     // sampleHistograms(n, d, epsilon, array, reorder_dim);
-    reorder_dimensions(n, d, array, reorder_dim);
+    reorder_dimensions(n, d, x1, reorder_dim);
+    reorder_dimensions(n, d, x2, reorder_dim);
 
 
     timer.stop();
@@ -91,8 +85,15 @@ int main(int argc, char** argv) {
     // printf("start\n"); fflush(stdout);
     // test_ego_loop3_long(n,d,threads,epsilon,array,&result,stripes,KBLOCK);
     algtimer.start();
+
+    for ( int i=0 ; i < 5 ; i++ ){
+        for ( int j=0 ; j < d ; j++ ){
+            printf("%f, ", x1[d*i + j]);
+        }
+        printf("\n");
+    }
 #ifdef COUNT_ONLY
-    test_ego_loop3_macro(n,d,epsilon,array,&result,stripes,&sortTime,&indexTime,&loadpercent);
+    // test_ego_loop3_macro(n,d,epsilon,array,&result,stripes,&sortTime,&indexTime,&loadpercent);
     // test_ego_loop3_macro(n,d,threads,epsilon,array,&result,stripes,&sortTime);
 #else
     // test_ego_loop3_macro_queue(n,d,threads,epsilon,array,&result,stripes,KBLOCK,queue, &sortTime);
@@ -119,8 +120,9 @@ int main(int argc, char** argv) {
     // HEADER:
     // N;D;JPPP;THREADS;EPSILON;STRIPES;KBLOCK;TIME;ALGTIME;SORTTIME;INDEXTIME;REORDERTIME;COUNTS;LOADPERCENT;WH
     printf("%zu;%zu;%f;%zu;%2.14f;%d;%d;%f;%f;%f;%f;%f;%ld;%f;%f\n", n,d,jp_per_point, NUM_THREADS,epsilon,stripes,KBLOCK,algtime+reorderTime,algtime - sortTime,sortTime,indexTime,reorderTime,result,loadpercent,watthours);
-    // freeA64(array);
-    ddr_free(array);
+
+    ddr_free(x1);
+    ddr_free(x2);
     free(reorder_dim);
 
     return 0;

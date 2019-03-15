@@ -7,6 +7,7 @@
 
 #define DBL_MAX         1.7976931348623158e+308
 
+double timestamp(void);
 double * mallocA64(size_t s);
 double * callocA64(size_t s);
 void freeA64(void * adr);

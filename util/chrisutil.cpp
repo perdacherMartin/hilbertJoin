@@ -27,6 +27,13 @@ double stopc(void) {
     return r / CLOCKS_PER_SEC;
 }
 
+double timestamp(void){
+    struct timeval c;
+    gettimeofday(&c, NULL);
+    long long r = (c.tv_sec * 100 + c.tv_usec / 10000) % 1000000000000000 ;
+    return (double)r / 100.;
+}
+
 double stop(void) {
     static struct timeval last;
     struct timeval c;

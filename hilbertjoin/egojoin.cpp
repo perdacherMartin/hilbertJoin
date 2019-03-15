@@ -819,8 +819,8 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
         for(int i=loadstart[par] ; i<loadstart[par+1] ; i++)
             for(int s=0 ; s<EGO_stripes ; s++)
                 curload += upper[s][i+nn/8] - lower[s][i+nn/8];
-#ifdef OUTPUT
         total_timer.stop();
+#ifdef OUTPUT
         printf("Consolidate %6.2f %d %d %d %d %d %ld %ld\n",total_timer.get_time(), par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
 #endif
 
@@ -837,6 +837,77 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
 //        for(int s=0 ; s<5 ; s++)
 //            printf("%ld ",savedload[NUM_THREADS*s+par]);
 }
+
+int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent){
+    CUtilTimer index_timer,total_timer;
+    long long result = 0;
+    long long refinements = 0;
+    unsigned long long savedload[5*NUM_THREADS];
+    double starttimestamp = timestamp() ;
+    index_timer.start();
+    EGO_PARALLEL_TRAN_NOSELF(nA, nB, d, epsilon, 2, arrayA, arrayB)
+        index_timer.stop();
+        // printf("timestamp index ready %6.2f\n",timestamp()-starttimestamp);
+//        for(int i=0 ; i<NUM_THREADS + 4 ; i+=4)
+//            printf("%2d %9d %9d %9d %9d\n", i, loadstart[i], loadstart[i+1], loadstart[i+2], loadstart[i+3]);
+//        for (int x=0 ; x<NUM_THREADS ; x++){
+//            long long cum_load = 0;
+//            for(int i = loadstart[x] ; i<loadstart[x+1] ; i++)
+//                for (int j = 0; j < EGO_stripes; j++)
+//                    cum_load += upper[j][i + nn / 8] - lower[j][i + nn / 8];
+//            if (x%4 == 0) printf("\n %2d", x);
+//            printf("%9ld (%5.2f%%)  ", cum_load, 100.*(double)cum_load/(double)overall_load);
+//        }
+        // printf("overall_load: %ld / %ld (=n/8*(n/8+1)/2) ==> %9.6f %%\n", overall_load, (long long)nA/8*(nA/8+1), (double)overall_load/(nA/8)/(nA/8-1)*200);
+       total_timer.start();
+       *indextime = index_timer.get_time() - sortTimer.get_time();
+       *sortTime = sortTimer.get_time();
+
+       *loadpercent = (double)overall_load/n/(n-1)*128;
+       #pragma omp parallel for proc_bind(close) reduction(+:result) reduction(+:refinements)
+    EGO_PREPARE
+        veci64 resultvec = _mm512_setzero_si512();
+        veci64 eights = _mm512_set1_epi64(8ll) ;
+        long long refineload = 0;
+    EGO_LOOP_TRAN_NOSELF {
+        resultvec += eights - _mm512_srli_epi64(_mm512_castpd_si512(sum1), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum2), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum3), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum4), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum5), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum6), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum7), 63)
+                            - _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63) ;
+        refineload ++;
+    }
+    EGO_CONSOLIDATE{
+        result += _mm512_reduce_add_epi64(resultvec);
+        refinements += refineload ;
+        int curload=0;
+        for(int i=loadstart[par] ; i<loadstart[par+1] ; i++)
+            for(int s=0 ; s<EGO_stripes ; s++)
+                curload += upper[s][i+nn/8] - lower[s][i+nn/8];
+        total_timer.stop();
+#ifdef OUTPUT
+        printf("Consolidate %6.2f %d %d %d %d %d %ld %ld\n",timestamp()-starttimestamp, par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
+#endif
+
+//        double testres[8] __attribute__((aligned(64)));
+//        _mm512_store_epi64(testres, resultvec);
+//        printf("par = %d: %d %d\n", par, result, testres[0]+testres[1]+testres[2]+testres[3]+testres[4]+testres[5]+testres[6]+testres[7]);
+    }
+    EGO_END_TRAN_NOSELF
+
+    *countresult = result;
+    // printf("result %ld\n", result);
+    // printf("refinements %ld Mio (%ld 8x8)\n", refinements*64/1000000, refinements);
+
+//    for(int par=0 ; par<NUM_THREADS ; par++, printf("\n"))
+//        for(int s=0 ; s<5 ; s++)
+//            printf("%ld ",savedload[NUM_THREADS*s+par]);
+
+}
+
 
 // void test_ego_loop3_macro_queue(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK, boost::lockfree::queue<join_pair> &jpartners, double *sorttime){
 //     size_t result = 0;
@@ -1052,3 +1123,120 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
 //
 //     // *countresult = result;
 // }
+
+
+void prepareStripesNoSelf(int nA, int nB, int d, int activeDimensions, double epsilon, double *A, double *B, int ** lower, int **upper, double *selfA, double *selfB) {
+    double starttimestamp = timestamp();
+    int numStripes = 1;
+    for (int i = 0; i < activeDimensions; i++)
+        numStripes *= 3;
+    double lowerDisplace[numStripes][d];
+    double upperDisplace[numStripes][d];
+    for (int i = 0; i < numStripes; i++)
+        for (int j = 0; j < d; j++) {
+            lowerDisplace[i][j] = (-epsilon);
+            upperDisplace[i][j] = epsilon;
+        }
+    for (int i = 0; i < numStripes; i++) {
+        int power = numStripes / 3;
+        for (int j = 0; j < activeDimensions; j++) {
+            lowerDisplace[i][j] = upperDisplace[i][j] = epsilon * (double) (i / power % 3 - 1);
+            power /= 3;
+        }
+    }
+    int nn = ceilpowtwo(nA);
+    lower[0] = (int *) callocA64(sizeof (int) * 4 * nn * numStripes);
+    for (int j=0 ; j<numStripes ; j++){
+        lower[j] = (int*)((char *)(lower[0]) + j  * 4 * nn * sizeof(int)) ;
+        upper[j] = (int*)((char *)(lower[j]) + 2 * nn * sizeof(int)) ;
+    }
+#pragma omp parallel for
+    for (int par = 0; par < NUM_THREADS; par++){
+        int imin = par * nA / NUM_THREADS / 8 * 8;
+        int imax = (par + 1) * nA / NUM_THREADS / 8 * 8;
+        if (par+1 == NUM_THREADS)
+            imax = nA;
+        double h[d];
+        for(int j=0; j<numStripes ; j++){
+            for(int a=0 ; a<d ; a++)
+                h[a] = A[imin*d+a]+lowerDisplace[j][a] ;
+            int a = 0 ;
+            int b = nB-1 ;
+            int m = (a+b)/2;
+            while (b-a > 1){
+                if(epsilonGridCompare(B + m*d, h) >= 0)
+                    b = m ;
+                else
+                    a = m ;
+                m = (a+b)/2 ;
+            }
+            for(int i=imin ; i<imax ; i++) {
+                for(int a=0 ; a<d ; a++)
+                    h[a] = A[i*d+a]+lowerDisplace[j][a] ;
+                while (m > 0 && epsilonGridCompare(B + m * d, h) >= 0)
+                    m--;
+                while (m < nB && epsilonGridCompare(B + m * d, h) < 0)
+                    m++;
+                lower[j][i+nn] = m/8 ;
+            }
+        }
+        for(int j=0; j<numStripes ; j++){
+            for(int a=0 ; a<d ; a++)
+                h[a] = A[imin*d+a]+upperDisplace[j][a] ;
+            int a = imin ;
+            int b = nB-1 ;
+            int m = (a+b)/2;
+            while (b-a > 1){
+                if(epsilonGridCompare(B + m*d, h) >= 0)
+                    b = m ;
+                else
+                    a = m ;
+                m = (a+b)/2 ;
+            }
+            for(int i=imin ; i<imax ; i++) {
+                for(int a=0 ; a<d ; a++)
+                    h[a] = A[i*d+a]+upperDisplace[j][a] ;
+                while (m > 0 && epsilonGridCompare(B + m * d, h) >= 0)
+                    m--;
+                while (m < nB && epsilonGridCompare(B + m * d, h) < 0)
+                    m++;
+                upper[j][i+nn] = (m+7)/8 ;
+            }
+        }
+        double epsilon22 = epsilon * epsilon / 2;
+        if(selfA) {
+            for (int i = imin; i < imax; i++) {
+                double h = epsilon22;
+                for (int j = 0; j < d; j++)
+                    h -= A[i * d + j] * A[i * d + j];
+                selfA[i] = h / 2;
+            }
+        }
+        if(selfB) {
+            for (int i = par*nB/NUM_THREADS ; i < (par+1)*nB/NUM_THREADS; i++) {
+                double h = epsilon22;
+                for (int j = 0; j < d; j++)
+                    h -= B[i * d + j] * B[i * d + j];
+                selfB[i] = h / 2;
+            }
+        }
+        for(int j=0; j<numStripes ; j++){
+            for (int i=imin/8 ; i<imax/8 ; i++)
+                lower[j][i+nn/8] = min(min(min(lower[j][i*8+nn],lower[j][i*8+nn+1]),min(lower[j][i*8+nn+2], lower[j][i*8+nn+3])),
+                        min(min(lower[j][i*8+nn+4],lower[j][i*8+nn+5]),min(lower[j][i*8+nn+6], lower[j][i*8+nn+7]))) ;
+            for (int i=imin/8 ; i<imax/8 ; i++)
+                upper[j][i+nn/8] = max(max(max(upper[j][i*8+nn],upper[j][i*8+nn+1]),max(upper[j][i*8+nn+2], upper[j][i*8+nn+3])),
+                        max(max(upper[j][i*8+nn+4],upper[j][i*8+nn+5]),max(upper[j][i*8+nn+6], upper[j][i*8+nn+7]))) ;
+        }
+        for (int j=1 ; j<numStripes ; j++)
+            for (int i=imin/8 ; i<imax/8 ; i++)
+                upper[j-1][i+nn/8] = min(upper[j-1][i+nn/8], lower[j][i+nn/8]);
+#ifdef OUTPUT
+        printf("Thread %d ready %7.2f %d %d\n", par, timestamp()-starttimestamp, imin, imax);
+#endif
+    }
+    for (int j=0 ; j<numStripes ; j++){
+        epsilonGridCompleteListMin(nn/8, lower[j]);
+        epsilonGridCompleteListMax(nn/8, upper[j]);
+    }
+}
