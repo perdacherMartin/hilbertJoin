@@ -17,7 +17,7 @@ KBLOCK should be smaller then the dimension of the dataset. Best fitting values 
 
 In our experiments (see paper) we _always_ use the following setting:
 - KBLOCK=4
-- STRIPES=14
+- active dimensions=3, which are exactly 14 stripes (see paper Section 3.1 "Determination of the Bounds")
 
 For uniform data we suggest to use the following parameter settings:
 - KBLOCK=16
