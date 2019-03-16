@@ -14,6 +14,8 @@ export CXX=g++
 export CC=gcc
 ```
 
+[Intel&copy; Software Development Emulator (SDE)](https://software.intel.com/en-us/articles/intel-software-development-emulator)
+
 # Build with CMake
 
 to build this project you need to type the following commands into your shell:
