@@ -86,12 +86,6 @@ int main(int argc, char** argv) {
     // test_ego_loop3_long(n,d,threads,epsilon,array,&result,stripes,KBLOCK);
     algtimer.start();
 
-    for ( int i=0 ; i < 5 ; i++ ){
-        for ( int j=0 ; j < d ; j++ ){
-            printf("%f, ", x1[d*i + j]);
-        }
-        printf("\n");
-    }
 #ifdef COUNT_ONLY
     // test_ego_loop3_macro(n,d,epsilon,array,&result,stripes,&sortTime,&indexTime,&loadpercent);
     // test_ego_loop3_macro(n,d,threads,epsilon,array,&result,stripes,&sortTime);
