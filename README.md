@@ -14,7 +14,7 @@ export CXX=g++
 export CC=gcc
 ```
 
-[Intel&copy; Software Development Emulator (SDE)](https://software.intel.com/en-us/articles/intel-software-development-emulator)
+If your hardware does not support AVX-512, you could use [Intel&copy; Software Development Emulator (SDE)](https://software.intel.com/en-us/articles/intel-software-development-emulator) to emulate AVX-512 registers.
 
 # Build with CMake
 
