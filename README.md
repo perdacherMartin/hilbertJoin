@@ -54,7 +54,8 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
 
 - [BLAS-join](https://gitlab.cs.univie.ac.at/Google-TPU/BLAS-join/)
 - [Super-EGO](https://www.ics.uci.edu/~dvk/code/SuperEGO.html)
-  Notes: we adapted the code to perform a self-join and added efficient thread-independent counting.
+
+Notes: we adapted the code to perform a self-join and added efficient thread-independent counting.
 
 # References
 
