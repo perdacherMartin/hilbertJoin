@@ -59,7 +59,7 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
   <br/> List of changes:
   - Changed from float to double precision.
   - Adapted to a self-join problem.
-  - We take care of the dimensions, within our compilation process. 
+  - We take care of the dimensions, within our compilation process (D must be known at compile time).
 
 # References
 
