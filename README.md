@@ -55,11 +55,12 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
 # Comparison partners
 
 - [BLAS-join](https://gitlab.cs.univie.ac.at/Google-TPU/BLAS-join/)
-- [Super-EGO](https://www.ics.uci.edu/~dvk/code/SuperEGO.html). <br/> Notes: we adapted the code to perform a self-join and added efficient thread-independent counting.
+- [Super-EGO](https://www.ics.uci.edu/~dvk/code/SuperEGO.html). <br/> Notes: we adapted the code to perform a self-join.
   <br/> List of changes:
   - Changed from float to double precision.
   - Adapted to a self-join problem.
   - We take care of the dimensions, within our compilation process (D must be known at compile time).
+  - Removed storing of results, and added thread independent counting.
 
 # References
 
