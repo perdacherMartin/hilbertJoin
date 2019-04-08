@@ -46,6 +46,8 @@ make -j
 
 # Datasets used in our publication
 
+Note: use `.csv` files without header!
+
 #### Synthetic data (as comma seperated files)
 
 - [Uniform_200K](https://ucloud.univie.ac.at/index.php/s/LaPLUmXQKsldvcO)
