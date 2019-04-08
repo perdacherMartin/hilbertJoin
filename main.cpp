@@ -14,10 +14,10 @@
 #include "util/arguments.h"
 #include "hilbertjoin/egojoin.h"
 
+#ifndef COUNT_ONLY
 #include <boost/lockfree/queue.hpp>
 #include <boost/atomic.hpp>
 
-#ifndef COUNT_ONLY
 size_t consumer_count;
 
 int consumer(boost::lockfree::queue<join_pair> &queue)
@@ -42,7 +42,9 @@ int main(int argc, char** argv) {
     size_t result=0l;
     int stripes=14;
     int actdim=3;
+#ifndef COUNT_ONLY
     boost::lockfree::queue<join_pair> queue(10000);
+#endif
     double sortTime=0.0, reorderTime=0.0, indexTime=0.0;
     double watthours=0.0;
     double totaltime=0.0,algtime=0.0;
@@ -72,8 +74,8 @@ int main(int argc, char** argv) {
     //     printf("\n");
     // }
 
-    char outfile1[256] = "outfile1.csv";
-    save_text_file(array, n,d,outfile1);
+    // char outfile1[256] = "outfile1.csv";
+    // save_text_file(array, n,d,outfile1);
 
     // pmeter.reset(); pmeter.start();
     timer.start();

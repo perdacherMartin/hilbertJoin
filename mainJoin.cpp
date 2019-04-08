@@ -14,10 +14,11 @@
 #include "util/arguments.h"
 #include "hilbertjoin/egojoin.h"
 
+
+#ifndef COUNT_ONLY
 #include <boost/lockfree/queue.hpp>
 #include <boost/atomic.hpp>
 
-#ifndef COUNT_ONLY
 size_t consumer_count;
 
 int consumer(boost::lockfree::queue<join_pair> &queue)
