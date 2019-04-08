@@ -7,6 +7,10 @@ Accepted for [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30
 - cmake version >= 3.7.0
 - Linux package: *build-essential*, including *GNU make* version >= 4.1 
 
+### Random number generators
+- We use the random number generator provided by Intel&copy; MKL. Therefore, a working [Intel&copy; MKL](https://software.intel.com/en-us/mkl) environment at `/opt/intel` should be installed.
+
+
 # Before compilation
 
 To explicitly ensure, that CMake will use the GNU compiler use:
