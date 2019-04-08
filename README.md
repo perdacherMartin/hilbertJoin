@@ -14,6 +14,8 @@ export CXX=g++
 export CC=gcc
 ```
 
+If your hardware does not support AVX-512, you could use [Intel&copy; Software Development Emulator (SDE)](https://software.intel.com/en-us/articles/intel-software-development-emulator) to emulate AVX-512 registers.
+
 # Build with CMake
 
 to build this project you need to type the following commands into your shell:
@@ -53,6 +55,12 @@ Feel free to report [issues](https://gitlab.cs.univie.ac.at/martinp16cs/hilbertJ
 # Comparison partners
 
 - [BLAS-join](https://gitlab.cs.univie.ac.at/Google-TPU/BLAS-join/)
+- [Super-EGO](https://www.ics.uci.edu/~dvk/code/SuperEGO.html). 
+  <br/> List of changes:
+  - Changed from float to double precision.
+  - Adapted to a self-join problem.
+  - We take care of the dimensions, within our compilation process (D must be known at compile time).
+  - Removed storing of results, and added thread independent counting.
 
 # References
 
