@@ -19,7 +19,9 @@ set(SOURCE_FILES_JOIN mainJoin.cpp hilbertjoin/egojoin.cpp hilbertjoin/hilloop.c
 # adding MKL include directory
 include_directories($ENV{MKLROOT}/include)
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lboost_system")
+# set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lboost_system")
+
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
 
 # xeon-phi
 link_directories($ENV{MKLROOT}/lib/intel64)
@@ -42,7 +44,9 @@ find_library ( mkl_omp_LIB NAMES libiomp5.a
 ####################
 # cmake -DCMAKE_BUILD_TYPE=Debug ..
 # and ignore the warning: "Manually-specified variables were not used by the project: CMAKE_BUID_TYPE"
-set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lboost_system -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
+
+# set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lboost_system -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
+set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
 
 
 # add_executable(egoHilb ${SOURCE_FILES})
