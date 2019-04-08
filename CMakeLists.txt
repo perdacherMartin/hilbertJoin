@@ -51,8 +51,10 @@ add_executable(hilbertSelfJoinCountOnly ${SOURCE_FILES_SELF})
 
 target_compile_definitions(hilbertJoinCountOnly PRIVATE -DCOUNT_ONLY)
 target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DCOUNT_ONLY)
-# target_compile_definitions(hilbertJoinCountOnly PRIVATE -DOUTPUT)
-# target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DOUTPUT)
+
+## for a non-verbose version comment out the next two lines
+target_compile_definitions(hilbertJoinCountOnly PRIVATE -DOUTPUT)
+target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DOUTPUT)
 
 if ($ENV{KBLOCK})
     target_compile_definitions(hilbertJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})

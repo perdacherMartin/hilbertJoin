@@ -3,25 +3,25 @@
 #include "arguments.h"
 
 
-void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d, char *filename, bool *isBinary, int *activedims){
+void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d, char *filename, int *activedims){
   char c;
   FILE *file;
 
   if ( argc < 5 ){
     fprintf (stderr, "There are obligatory parameters.\n");
-    fprintf (stderr, "Usage: ./egoHilb (or ./egoCano)");
+    fprintf (stderr, "Usage: ./hilbertSelfJoinCountOnly (or ./egoCano)");
 
     fprintf(stderr, "Obligatory parameters: \n");
     fprintf(stderr, "n (number of objects )\ne (epsilon)\nd (dimensionality)\n");
     fprintf(stderr, "Optional parameters: \n\n");
     fprintf(stderr, "a number of acitve dimensions (default 3)\n");
-    fprintf(stderr, "f (filename) if there is no filename we use random generated data [0.0, 100.0)\n");
-    fprintf(stderr, "b use the -b argument without options to specify that it is a binary file.\n");
-    fprintf(stderr, "Example (with default values): hilbertSelfJoinCountOnly -n 200 -e 0.2 -d 64 -t 64\n");
+    fprintf(stderr, "f (filename) if there is no filename we use random generated data [0.0, 1.0)\n");
+    // fprintf(stderr, "b use the -b argument without options to specify that it is a binary file.\n");
+    fprintf(stderr, "Example (with default values): ./hilbertSelfJoinCountOnly -n 200000 -e 0.2 -d 64 -t 64\n");
     exit(1);
   }
 
-  while ( (c = getopt(argc, argv, "n:e:d:t:f:k:s:b") ) != -1) {
+  while ( (c = getopt(argc, argv, "n:e:d:t:f:k:s:") ) != -1) {
 
 	if ( optarg ){
         switch(c){
@@ -57,9 +57,9 @@ void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d,
         }
 	}else{
         switch(c){
-            case 'b':
-                *isBinary = true;
-                break;
+            // case 'b':
+            //     *isBinary = true;
+            //     break;
             case '?':
                 fprintf (stderr, "Unknown option `-%c'.\n", optopt);
                 exit(1);
@@ -78,7 +78,7 @@ void parsing_args(int argc, char* argv[], size_t *n, double *epsilon, size_t *d,
 }
 
 
-void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *epsilon, size_t *d, char *filename, char *filename2, bool *isBinary, int *activedims){
+void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *epsilon, size_t *d, char *filename, char *filename2, int *activedims){
   char c;
   FILE *file;
 
@@ -92,12 +92,12 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
     fprintf(stderr, "a number of active dimensions (default 3)\n");
     fprintf(stderr, "f (filename) if there is no filename we use random generated data [0.0, 1.0)\n");
     fprintf(stderr, "g (filename set B) if there is no filename we use random generated data [0.0, 1.0)\n");
-    fprintf(stderr, "b use the -b argument without options to specify that it is a binary file.\n");
+    // fprintf(stderr, "b use the -b argument without options to specify that it is a binary file.\n");
     fprintf(stderr, "Example (with default values): ./hilbertJoinCountOnly -n 200000 -m 200000 -e 0.2 -d 20 -t 64\n");
     exit(1);
   }
 
-  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:g:k:a:b") ) != -1) {
+  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:g:k:a:") ) != -1) {
 
 	if ( optarg ){
         switch(c){
@@ -139,9 +139,9 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
         }
 	}else{
         switch(c){
-            case 'b':
-                *isBinary = true;
-                break;
+            // case 'b':
+            //     *isBinary = true;
+            //     break;
             case '?':
                 fprintf (stderr, "Unknown option `-%c'.\n", optopt);
                 exit(1);

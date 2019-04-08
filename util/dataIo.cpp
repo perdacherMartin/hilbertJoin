@@ -21,6 +21,8 @@ void random_init_unif(double *array, const int N, const int D, const int INIT_SE
         // const int imax = (ME == ALL_THREADS - 1 ) ? N : (N / ALL_THREADS) * (ME+1);
         // const int MY_N = imax - imin;
 
+        errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, 1 * D, &array[0], LOWER_BOUND, UPPER_BOUND); // avoid first value always 0
+
         errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, N * D, &array[0], LOWER_BOUND, UPPER_BOUND);
 
         if ( errcode != VSL_ERROR_OK && errcode != VSL_STATUS_OK ){
@@ -49,7 +51,7 @@ void random_init_8_selective(double *array, const int N, const int D, const int 
         // const int imax = (ME == ALL_THREADS - 1 ) ? N : (N / ALL_THREADS) * (ME+1);
         // const int MY_N = imax - imin;
 
-        errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, 1 * D, &array[0], LOWER_BOUND, UPPER_BOUND); // first value always 0
+        errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, 1 * D, &array[0], LOWER_BOUND, UPPER_BOUND); // avoid first value always 0
 
         errcode = vdRngUniform(VSL_RNG_METHOD_UNIFORM_STD, stream, N * D, &array[0], LOWER_BOUND, UPPER_BOUND);
 
@@ -97,13 +99,24 @@ void random_init(double *array, const int N, const int D){
     }
 }
 
-void read_file(double *array, const int N, const int D, char filename[], const bool IS_BINARY){
+int stringEndsWith(const char *str, const char *suffix)
+{
+    if (!str || !suffix)
+        return 0;
+    size_t lenstr = strlen(str);
+    size_t lensuffix = strlen(suffix);
+    if (lensuffix >  lenstr)
+        return 0;
+    return strncmp(str + lenstr - lensuffix, suffix, lensuffix) == 0;
+}
+
+void read_file(double *array, const int N, const int D, char filename[]){
     FILE *fp;
     size_t counts = 0;
     size_t i=0,j=0;
     char line[MAX_LINE_LENGTH];
     char *token=NULL;
-    const char space[2] = " ";
+    const char space[2] = ",";
 
     fp = fopen(filename,"r");
 
@@ -112,10 +125,10 @@ void read_file(double *array, const int N, const int D, char filename[], const b
         exit(1);
     }
 
-    if ( IS_BINARY ){
-        // printf("processing binary file!");fflush(stdout);
-        // read binary file, everything at once
-        // printf("binary");
+    if ( stringEndsWith(filename, ".bin" ) ){
+#ifdef OUTPUT
+        printf("reading binary file '%s'\n", filename);
+#endif
         counts = fread(array, N * D, sizeof(double), fp);
         // printf("%dx%d: %d readed\n", N, D, counts);
         if ( counts == 0 ) {
@@ -123,11 +136,13 @@ void read_file(double *array, const int N, const int D, char filename[], const b
             exit(1);
         }
     }else{
-        printf("not binary");
+
+#ifdef OUTPUT
+        printf("reading text file '%s'\n", filename);
+#endif
         // processing a text file
         // format: there are D double values each line. Each value is separated by a space character.
-        // notice MAX_LINE_LENGTH = 2049
-        // printf("processing text file!");fflush(stdout);
+
         i = 0;
         while ( fgets ( line, MAX_LINE_LENGTH, fp ) != NULL &&
                 i < N ) {
@@ -188,12 +203,14 @@ void save_text_file(double *array, const int N, const int D, char filename[]){
         strcpy(line, "");
         for ( j=0 ; j < D ; j++ ){
             strcpy(strDouble, "");
-            sprintf(strDouble, "%f ", array[i*D + j]);
+            sprintf(strDouble, "%f", array[i*D + j]);
+            if ( j+1 < D ){
+                strcat(strDouble, ",");
+            }
             strcat(line, strDouble);
 
         }
         fprintf(fp, "%s\n", line);
-
     }
 
     fclose(fp);

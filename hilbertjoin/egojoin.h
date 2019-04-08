@@ -12,7 +12,7 @@
 #include "../util/chrisutil.h"
 #include "../util/dataIo.h"
 #include "../measure/timer.h"
-#include "../measure/energy.h"
+// #include "../measure/energy.h"
 #include "hilloop.h"
 
 #include <boost/lockfree/queue.hpp>
