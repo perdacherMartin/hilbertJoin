@@ -8,7 +8,7 @@
 #include <math.h>
 
 #include "measure/timer.h"
-#include "measure/energy.h"
+// #include "measure/energy.h"
 #include "util/dataIo.h"
 #include "util/chrisutil.h"
 #include "util/arguments.h"
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     char filename2[256] = "";
     bool isBinary=false;
     CUtilTimer timer, algtimer;
-    Hioki pmeter;
+    // Hioki pmeter;
     size_t result=0l;
     int stripes=14;
     int actdim=3;
@@ -118,8 +118,8 @@ int main(int argc, char** argv) {
 
     algtimer.stop();
     algtime = algtimer.get_time();
-    pmeter.stop();
-    watthours=pmeter.getWH();
+    // pmeter.stop();
+    // watthours=pmeter.getWH();
 
 #ifndef COUNT_ONLY
     // if we materialize with a non-blocking linked list, then joincounts are zero

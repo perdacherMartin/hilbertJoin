@@ -5,7 +5,7 @@ project(ego2)
 # export CC=/opt/gcc6.1.0/usr/local/bin/gcc
 # export CXX=/opt/gcc6.1.0/usr/local/bin/g++
 
-set(UTIL_SOURCES util/dataIo.cpp util/arguments.cpp util/allocation.cpp measure/energy.cpp measure/timer.cpp util/chrisutil.cpp)
+set(UTIL_SOURCES util/dataIo.cpp util/arguments.cpp util/allocation.cpp  measure/timer.cpp util/chrisutil.cpp)
 
 set(SOURCE_FILES_SELF main.cpp hilbertjoin/egojoin.cpp hilbertjoin/hilloop.cpp ${UTIL_SOURCES})
 set(SOURCE_FILES_JOIN mainJoin.cpp hilbertjoin/egojoin.cpp hilbertjoin/hilloop.cpp ${UTIL_SOURCES})

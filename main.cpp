@@ -39,12 +39,14 @@ int main(int argc, char** argv) {
     char filename[256] = "";
     bool isBinary=false;
     CUtilTimer timer, algtimer;
-    Hioki pmeter;
+    // Hioki pmeter;
     size_t result=0l;
     int stripes=14;
     int actdim=3;
     boost::lockfree::queue<join_pair> queue(10000);
-    double sortTime=0.0, reorderTime=0.0, indexTime=0.0, watthours=0.0,totaltime=0.0,algtime=0.0;
+    double sortTime=0.0, reorderTime=0.0, indexTime=0.0,
+    double watthours=0.0;
+    double totaltime=0.0,algtime=0.0;
     double loadpercent=0.0;
 
     parsing_args(argc, argv, &n, &epsilon, &d, filename, &isBinary, &actdim);
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
         printf("\n");
     }
 
-    pmeter.reset(); pmeter.start();
+    // pmeter.reset(); pmeter.start();
     timer.start();
 
     outputStatistics(n, d, epsilon, array, reorder_dim);
@@ -103,8 +105,8 @@ int main(int argc, char** argv) {
 
     algtimer.stop();
     algtime = algtimer.get_time();
-    pmeter.stop();
-    watthours=pmeter.getWH();
+    // pmeter.stop();
+    // watthours=pmeter.getWH();
 
 #ifndef COUNT_ONLY
     // if we materialize with a non-blocking linked list, then joincounts are zero
