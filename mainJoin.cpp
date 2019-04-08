@@ -58,17 +58,36 @@ int main(int argc, char** argv) {
     double *x1 = (double*) ddr_alloc(n * sizeof (double) * d + 16384);
     double *x2 = (double*) ddr_alloc(m * sizeof (double) * d + 16384);
 
-    if ( strcmp(filename,"" ) == 0) {
-        random_init_unif(x1,n,d,1);
-    }else{
-        read_file(x1, n, d, filename, isBinary);
-    }
+    // if ( strcmp(filename,"" ) == 0) {
+    //     // random_init_unif(x1,n,d,1);
+    //     random_init_8_selective(x1,n,d,1);
+    // }else{
+    //     read_file(x1, n, d, filename, isBinary);
+    // }
+
+    // char filenameA[256];
+    // sprintf(filenameA, "selective8_dims_A_%d_%d_normalized.bin", n,d);
+    // save_binary_file(x1, n, d, filenameA);
+    // printf("savedA\n");fflush(stdout);
 
     if ( strcmp(filename2,"" ) == 0) {
-        random_init_unif(x2,m,d,2);
+        // random_init_unif(x2,m,d,2);
+        random_init_8_selective(x2,m,d,2);
     }else{
         read_file(x2, m, d, filename, isBinary);
     }
+
+    // char filenameB[256];
+    // sprintf(filenameB, "selective8_dims_B_%d_%d_normalized.bin", m,d);
+    // save_binary_file(x2, m, d, filenameB);
+    // printf("savedB\n");fflush(stdout);
+    //
+    // for ( int i=m-3 ; i < m ; i++ ){
+    //     for ( int j=0 ; j < d ; j++ ){
+    //         printf("%f, ", x2[i*d+j] );
+    //     }
+    //     printf("\n");
+    // }
 
     // pmeter.reset(); pmeter.start();
     timer.start();
@@ -87,6 +106,7 @@ int main(int argc, char** argv) {
     algtimer.start();
 
 #ifdef COUNT_ONLY
+    test_ego_loop3_noself(n, m, d, epsilon, x1, x2, &result, actdim, &sortTime, &indexTime, &loadpercent);
     // test_ego_loop3_macro(n,d,epsilon,array,&result,stripes,&sortTime,&indexTime,&loadpercent);
     // test_ego_loop3_macro(n,d,threads,epsilon,array,&result,stripes,&sortTime);
 #else
@@ -113,7 +133,7 @@ int main(int argc, char** argv) {
     double jp_per_point = (result == 0 ) ? 0 : (double)result / n ;
     // HEADER:
     // N;D;JPPP;THREADS;EPSILON;STRIPES;KBLOCK;TIME;ALGTIME;SORTTIME;INDEXTIME;REORDERTIME;COUNTS;LOADPERCENT;WH
-    printf("%zu;%zu;%f;%zu;%2.14f;%d;%d;%f;%f;%f;%f;%f;%ld;%f;%f\n", n,d,jp_per_point, NUM_THREADS,epsilon,stripes,KBLOCK,algtime+reorderTime,algtime - sortTime,sortTime,indexTime,reorderTime,result,loadpercent,watthours);
+    printf("%zu;%zu;%zu;%f;%zu;%2.14f;%d;%d;%f;%f;%f;%f;%f;%ld;%f;%f\n", n,m,d,jp_per_point, NUM_THREADS,epsilon,stripes,KBLOCK,algtime+reorderTime,algtime - sortTime,sortTime,indexTime,reorderTime,result,loadpercent,watthours);
 
     ddr_free(x1);
     ddr_free(x2);

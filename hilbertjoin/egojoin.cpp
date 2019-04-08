@@ -838,7 +838,7 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
 //            printf("%ld ",savedload[NUM_THREADS*s+par]);
 }
 
-int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent){
+void test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent){
     CUtilTimer index_timer,total_timer,sortTimer;
     long long result = 0;
     long long refinements = 0;
@@ -904,8 +904,7 @@ int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const d
 
 //    for(int par=0 ; par<NUM_THREADS ; par++, printf("\n"))
 //        for(int s=0 ; s<5 ; s++)
-//            printf("%ld ",savedload[NUM_THREADS*s+par]);
-
+//            printf("%ld ",savedload[NUM_THREADS*s+par]);    
 }
 
 

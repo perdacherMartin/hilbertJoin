@@ -61,7 +61,7 @@ void outputStatistics(int n, int d, double epsilon, double *array, int *reorder_
 void sampleHistograms(int n, int d, double epsilon, double *array, int *reorder_dim);
 
 void prepareStripesNoSelf(int nA, int nB, int d, int activeDimensions, double epsilon, double *A, double *B, int ** lower, int **upper, double *selfA, double *selfB);
-int test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent);
+void test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const double epsilon, double *arrayA, double *arrayB, size_t *countresult, const int activedims, double *sortTime, double *indextime, double *loadpercent);
 
 #define hilbert_swap(i,j) {memcpy(b, (i), size); memcpy((i), (j), size); memcpy((j), b, size);}
 #define hilbert_max(a,b) ((a)>(b) ? (a) : (b))

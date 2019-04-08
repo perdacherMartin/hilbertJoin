@@ -97,7 +97,7 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
     exit(1);
   }
 
-  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:k:a:b") ) != -1) {
+  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:g:k:a:b") ) != -1) {
 
 	if ( optarg ){
         switch(c){
@@ -120,7 +120,7 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
                 strcpy(filename, optarg);
                 break;
             case 'g':
-                strcpy(filename, optarg);
+                strcpy(filename2, optarg);
                 break;
             case '?':
               if (optopt == 'c')

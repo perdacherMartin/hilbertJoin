@@ -70,12 +70,12 @@ int main(int argc, char** argv) {
     read_file(array, n, d, filename, isBinary);
     // printf("readfile ok\n"); fflush(stdout);
 
-    // for ( int i=0 ; i < 10 ; i++ ){
-    //     for ( int j=0 ; j < d ; j++ ){
-    //         printf("%f, ", array[i*d+j]);
-    //     }
-    //     printf("\n");
-    // }
+    for ( int i=0 ; i < 10 ; i++ ){
+        for ( int j=0 ; j < d ; j++ ){
+            printf("%f, ", array[i*d+j]);
+        }
+        printf("\n");
+    }
 
     pmeter.reset(); pmeter.start();
     timer.start();
