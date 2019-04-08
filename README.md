@@ -7,11 +7,20 @@ Accepted for [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30
 - cmake version >= 3.7.0
 - Linux package: *build-essential*, including *GNU make* version >= 4.1 
 
+# Before compilation
+
 To explicitly ensure, that CMake will use the GNU compiler use:
 
 ```{bash, engine='sh'}
 export CXX=g++
 export CC=gcc
+```
+
+Lookup the [compiler-flag](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html) for your hardware. Change the `-march` flag in your `CMakeLists.txt` depending on the hardware.
+
+Example configuration for Skylake processors:
+```{bash, engine='sh'}
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=skylake -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
 ```
 
 If your hardware does not support AVX-512, you could use [Intel&copy; Software Development Emulator (SDE)](https://software.intel.com/en-us/articles/intel-software-development-emulator) to emulate AVX-512 registers.
