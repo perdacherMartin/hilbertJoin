@@ -8,7 +8,7 @@ Accepted for [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30
 - Linux package: *build-essential*, including *GNU make* version >= 4.1 
 
 ### Random number generators
-- We use the random number generator provided by Intel&copy; MKL. Therefore, a working [Intel&copy; MKL](https://software.intel.com/en-us/mkl) environment at `/opt/intel` should be installed.
+- We use the random number generator provided by Intel&copy; MKL. Therefore, a working [Intel&copy; MKL](https://software.intel.com/en-us/mkl) environment should be installed. Ensure, that the environment variable `$MKLROOT` [is set correctly](https://software.intel.com/en-us/mkl-linux-developer-guide-scripts-to-set-environment-variables).
 
 
 # Before compilation
