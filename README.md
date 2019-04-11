@@ -45,6 +45,34 @@ cmake ..
 make -j
 ```
 
+# Example calls
+
+### Self-join
+
+For a selfjoin with random generated uniform data [0.0, 1.0):
+`./hilbertSelfJoinCardinality -n 200000 -e 0.2 -d 64 -t 64`
+
+- `-n` are the number of objects in set A
+- `-e` epsilon
+- `-d` number of features (or dimensions)
+- `-t` number of threads
+ 
+For a selfjoin with a dataset from a file:
+`./hilbertSelfJoinCardinality -n 200000 -e 0.2 -d 64 -t 64 -f uniform_200000x64.csv`
+
+- `-f` filename 
+    Each value is separated by a comma ',' and has $d$ objects in each line. The file has $n$ lines without a header.
+    You could also use a binary format ".bin". 
+
+### Join
+
+Join between two sets `A` and `B` with random generated uniform data [0.0, 1.0):
+`./hilbertJoinCardinality -n 200000 -m 200000 -e 0.2 -d 20 -t 64`
+
+where 
+- `-n` are the number of objects in set A
+- `-m` are the number of objects in set B
+
 # Datasets used in our publication
 
 Note: use `.csv` files without header!
