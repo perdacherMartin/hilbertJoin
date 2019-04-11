@@ -46,24 +46,24 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -
 
 
 # add_executable(egoHilb ${SOURCE_FILES})
-add_executable(hilbertJoinCountOnly ${SOURCE_FILES_JOIN})
-add_executable(hilbertSelfJoinCountOnly ${SOURCE_FILES_SELF})
+add_executable(hilbertJoinCardinality ${SOURCE_FILES_JOIN})
+add_executable(hilbertSelfJoinCardinality ${SOURCE_FILES_SELF})
 
 target_compile_definitions(hilbertJoinCountOnly PRIVATE -DCOUNT_ONLY)
-target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DCOUNT_ONLY)
+target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DCOUNT_ONLY)
 
 ## for a non-verbose version comment out the next two lines
-target_compile_definitions(hilbertJoinCountOnly PRIVATE -DOUTPUT)
-target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DOUTPUT)
+target_compile_definitions(hilbertJoinCardinality PRIVATE -DOUTPUT)
+target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DOUTPUT)
 
 if ($ENV{KBLOCK})
-    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
-    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertJoinCardinality PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DKBLOCK=$ENV{KBLOCK})
 endif()
 
 if ($ENV{OMP_NUM_THREADS})
-    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
-    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertJoinCardinality PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
 endif()
 
 
