@@ -49,7 +49,7 @@ set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -
 add_executable(hilbertJoinCardinality ${SOURCE_FILES_JOIN})
 add_executable(hilbertSelfJoinCardinality ${SOURCE_FILES_SELF})
 
-target_compile_definitions(hilbertJoinCountOnly PRIVATE -DCOUNT_ONLY)
+target_compile_definitions(hilbertJoinCardinality PRIVATE -DCOUNT_ONLY)
 target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DCOUNT_ONLY)
 
 ## for a non-verbose version comment out the next two lines
