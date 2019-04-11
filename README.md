@@ -61,7 +61,7 @@ For a selfjoin with a dataset from a file:
 `./hilbertSelfJoinCardinality -n 200000 -e 0.2 -d 64 -t 64 -f uniform_200000x64.csv`
 
 - `-f` filename 
-    Each value is separated by a comma ',' and has $d$ objects in each line. The file has $n$ lines without a header.
+    Each value is separated by a comma ',' and has _d_ objects in each line. The file has _n_ lines without a header.
     You could also use a binary format ".bin". 
 
 ### Join
