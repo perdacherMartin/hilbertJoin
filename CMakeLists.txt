@@ -52,9 +52,9 @@ add_executable(hilbertSelfJoinCardinality ${SOURCE_FILES_SELF})
 target_compile_definitions(hilbertJoinCardinality PRIVATE -DCOUNT_ONLY)
 target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DCOUNT_ONLY)
 
-## for a non-verbose version comment out the next two lines
-target_compile_definitions(hilbertJoinCardinality PRIVATE -DOUTPUT)
-target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DOUTPUT)
+## for a more verbose version comment out the next two lines
+# target_compile_definitions(hilbertJoinCardinality PRIVATE -DOUTPUT)
+# target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DOUTPUT)
 
 if ($ENV{KBLOCK})
     target_compile_definitions(hilbertJoinCardinality PRIVATE -DKBLOCK=$ENV{KBLOCK})
