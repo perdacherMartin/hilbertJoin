@@ -5,6 +5,7 @@ Accepted for [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
 - GNU compiler version >= 5.1
 - cmake version >= 3.7.0
+- git version >= 1.8.3.1
 - Linux package: *build-essential*, including *GNU make* version >= 4.1 
 
 ### Random number generators
