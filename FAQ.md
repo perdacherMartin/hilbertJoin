@@ -24,3 +24,26 @@ In our experiments (see paper) we _always_ use the following setting:
 For uniform data we suggest to use the following parameter settings:
 - KBLOCK=16
 - STRIPES=1
+
+_What does the output mean?_
+
+Here an example output. 
+
+N;D;JPPP;THREADS;EPSILON;STRIPES;KBLOCK;TIME;ALGTIME;SORTTIME;INDEXTIME;REORDERTIME;COUNTS;LOADPERCENT;WH
+200000;64;0.000000;64;0.20000000000000;14;4;0.794607;0.579982;0.130889;0.514304;0.083736;0;0.061758;0.000000
+
+- N ... number of objects
+- D ... dimensionality (number of features)
+- JPPP ... join-partners per point _nSelectivity_ (see Section 4.1.3).
+- THREADS ... number of threads used
+- STRIPES ... bounds (Section 3.1 in paper)
+- KBLOCK ... check after each _KBLOCK_ objects, whether we have exceeded epsilon distance. 
+- TIME ... time spent for the total algorithm
+- ALGTIME ... time spent for join
+- SORTTIME ... time spent for sorting
+- INDEXTIME ... time spent for determining bounds (Section 3.1)
+- REORDERTIME ... time spent for reordering the dimensions (proposed by Super-EGO)
+- COUNTS ... cardinaities
+- LOADPERCENT ... load in percent
+- WH ... energy in watthours (currently turned off)
+
