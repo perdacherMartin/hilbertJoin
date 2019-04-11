@@ -72,6 +72,11 @@ Join between two sets `A` and `B` with random generated uniform data [0.0, 1.0):
 where 
 - `-n` are the number of objects in set A
 - `-m` are the number of objects in set B
+ 
+and files could be specified with
+
+- `-f` file for set A
+- `-g` file for set B
 
 # Datasets used in our publication
 
