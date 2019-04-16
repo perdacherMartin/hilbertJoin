@@ -1,4 +1,6 @@
 before_script:
+ tags:
+    - hilbert
  - apt-get update --yes
  - apt-get install --yes wget gnupg gnupg2 apt-transport-https
  # add intel-mkl repository
@@ -10,6 +12,8 @@ before_script:
  - source /opt/intel/mkl/bin/mklvars.sh intel64
 
 build:
+  tags:
+    - hilbert
   script:
     - mkdir -p build
     - cd build
