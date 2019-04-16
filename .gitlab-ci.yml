@@ -1,6 +1,4 @@
 before_script:
-  tags:
-    - hilbert
  - apt-get update --yes
  - apt-get install --yes wget gnupg gnupg2 apt-transport-https
  # add intel-mkl repository
