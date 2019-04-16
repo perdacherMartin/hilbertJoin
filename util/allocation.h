@@ -17,7 +17,7 @@
   #endif
 #endif
 
-#include <hbwmalloc.h>
+// #include <hbwmalloc.h>
 #include <errno.h>
 
 #define ALIGNMENT 64
