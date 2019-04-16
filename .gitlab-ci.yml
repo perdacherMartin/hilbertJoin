@@ -1,5 +1,5 @@
 before_script:
- tags:
+  tags:
     - hilbert
  - apt-get update --yes
  - apt-get install --yes wget gnupg gnupg2 apt-transport-https
