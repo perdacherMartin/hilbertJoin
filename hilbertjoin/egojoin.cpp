@@ -61,12 +61,12 @@ void sampleHistograms(int n, int d, double epsilon, double *array, int *reorder_
         for (int j = 0; j < sizes[i]; j++) {
             costref[i] += histos[h]*(histos[h] - 1) / 2 + (j > 0 ? histos[h - 1] * histos[h] : 0);
 #ifdef OUTPUT
-            printf("%ld ", histos[h]);
+            printf("%lld ", histos[h]);
 #endif
             h++;
         }
 #ifdef OUTPUT
-        printf(" => %ld\n", costref[i]);
+        printf(" => %lld\n", costref[i]);
 #endif
     }
     int * reorder_rev = (int*) malloc((d + 8) * sizeof (int));
@@ -75,7 +75,7 @@ void sampleHistograms(int n, int d, double epsilon, double *array, int *reorder_
     qsort(reorder_rev, d, sizeof (int), cmp_reorder_dim);
 #ifdef OUTPUT
     for (int j = 0; j < d + 8; j++)
-        printf("%2d %2d %ld\n", j, reorder_rev[j], j < d ? costref[reorder_rev[j]] : 0);
+        printf("%2d %2d %lld\n", j, reorder_rev[j], j < d ? costref[reorder_rev[j]] : 0);
 #endif
     // reorder_dim = (int*) malloc((d + 8) * sizeof (int));
     for (int j = 0; j < d + 8; j++)
@@ -108,7 +108,7 @@ int test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *
     EGO_END
 
 #ifdef OUTPUT
-    printf("count of join partners: %d\n", iresult);
+    printf("count of join partners: %lld\n", iresult);
 #endif
     *result = iresult;
 
@@ -135,14 +135,14 @@ int test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long 
                             - _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63) ;
     }
     EGO_CONSOLIDATE{
-        iresult += _mm512_reduce_add_epi64(resultvec);
+        iresult += _custom_mm512_reduce_add_epi64(resultvec);
 //        double testres[8] __attribute__((aligned(64)));
 //        _mm512_store_epi64(testres, resultvec);
 //        printf("par = %d: %d %d\n", par, result, testres[0]+testres[1]+testres[2]+testres[3]+testres[4]+testres[5]+testres[6]+testres[7]);
     }
     EGO_END_TRAN
 #ifdef OUTPUT
-    printf("result %d\n", iresult);
+    printf("result %lld\n", iresult);
 #endif
     *result = iresult;
 }
@@ -464,7 +464,7 @@ void prepareStripes(size_t n, size_t d, int numStripes, double epsilon, double *
 //    }
 }
 
-static inline long long _mm512_reduce_add_epi64(__m512i a){
+static inline long long _custom_mm512_reduce_add_epi64(__m512i a){
 //    __m256i low  = _mm512_cvtepi64_epi32(a);
 //    low = _mm256_hadd_epi32(low, low);
 //    __m128i ulow = _mm_hadd_epi32(_mm256_castsi256_si128(low),_mm256_castsi256_si128(low));
@@ -565,10 +565,10 @@ void outputStatistics(int n, int d, double epsilon, double *array, int *reorder_
                 ref += histo[i - 1] * histo[i];
             costref[j] = ref;
 #ifdef OUTPUT
-            printf("%3d %8d %8d %8d %20ld   [%ld", j, (int) first_int, (int) last_int, size, ref, histo[0]);
+            printf("%3d %8d %8d %8d %20lld   [%lld", j, (int) first_int, (int) last_int, size, ref, histo[0]);
 
             for (int i = 1; i < size && i < 10; i++)
-                printf(", %ld", histo[i]);
+                printf(", %lld", histo[i]);
             if (size > 10)
                 printf(", ...] %d %d\n", testcount, testcount2);
             else
@@ -583,7 +583,7 @@ void outputStatistics(int n, int d, double epsilon, double *array, int *reorder_
     qsort(reorder_rev, d, sizeof(int), cmp_reorder_dim);
 #ifdef OUTPUT
     for (int j=0 ; j<d+8 ; j++)
-        printf("%2d %2d %ld\n", j, reorder_rev[j], j<d?costref[reorder_rev[j]]:0);
+        printf("%2d %2d %lld\n", j, reorder_rev[j], j<d?costref[reorder_rev[j]]:0);
 #endif
     // reorder_dim = (int*) malloc ((d+8)*sizeof(int));
     for (int j=0 ; j<d+8 ; j++)
@@ -793,7 +793,7 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
         *sortTime = sortTimer.get_time();
         // printf("timestamp index ready %6.2f\n",timestamp()-starttimestamp);
 #ifdef OUTPUT
-        printf("overall_load: %ld / %ld (=n*(n-1)/2 / 64) ==> %f\n", overall_load, (long long)n/128*(n-1), (double)overall_load/n/(n-1)*128);
+        printf("overall_load: %lld / %lld (=n*(n-1)/2 / 64) ==> %f\n", overall_load, (long long)n/128*(n-1), (double)overall_load/n/(n-1)*128);
 #endif
         *loadpercent = (double)overall_load/n/(n-1)*128;
         #pragma omp parallel for reduction(+:result) reduction(+:refinements)
@@ -813,7 +813,7 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
         refineload ++;
     }
     EGO_CONSOLIDATE{
-        result += _mm512_reduce_add_epi64(resultvec);
+        result += _custom_mm512_reduce_add_epi64(resultvec);
         refinements += refineload ;
         int curload=0;
         for(int i=loadstart[par] ; i<loadstart[par+1] ; i++)
@@ -821,7 +821,7 @@ void test_ego_loop3_macro(size_t n, size_t d, double epsilon, double *array, siz
                 curload += upper[s][i+nn/8] - lower[s][i+nn/8];
         total_timer.stop();
 #ifdef OUTPUT
-        printf("Consolidate %6.2f %d %d %d %d %d %ld %ld\n",total_timer.get_time(), par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
+        printf("Consolidate %6.2f %d %d %d %d %d %lld %lld\n",total_timer.get_time(), par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
 #endif
 
 //        double testres[8] __attribute__((aligned(64)));
@@ -881,7 +881,7 @@ void test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const 
         refineload ++;
     }
     EGO_CONSOLIDATE{
-        result += _mm512_reduce_add_epi64(resultvec);
+        result += _custom_mm512_reduce_add_epi64(resultvec);
         refinements += refineload ;
         int curload=0;
         for(int i=loadstart[par] ; i<loadstart[par+1] ; i++)
@@ -889,7 +889,7 @@ void test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const 
                 curload += upper[s][i+nn/8] - lower[s][i+nn/8];
         total_timer.stop();
 #ifdef OUTPUT
-        printf("Consolidate %6.2f %d %d %d %d %d %ld %ld\n",timestamp()-starttimestamp, par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
+        printf("Consolidate %6.2f %d %d %d %d %d %lld %lld\n",timestamp()-starttimestamp, par, omp_get_thread_num(), loadstart[par], loadstart[par+1]-loadstart[par], curload, refineload, result);
 #endif
 
 //        double testres[8] __attribute__((aligned(64)));
@@ -904,7 +904,7 @@ void test_ego_loop3_noself(const size_t nA, const size_t nB, const int d, const 
 
 //    for(int par=0 ; par<NUM_THREADS ; par++, printf("\n"))
 //        for(int s=0 ; s<5 ; s++)
-//            printf("%ld ",savedload[NUM_THREADS*s+par]);    
+//            printf("%ld ",savedload[NUM_THREADS*s+par]);
 }
 
 

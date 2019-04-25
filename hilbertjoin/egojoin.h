@@ -49,7 +49,7 @@ void epsilonGridCompleteListMax(size_t n, int *list);
 void epsilonGridCompleteListMin(size_t n, int *list);
 static inline void transpose_8xd(size_t n, size_t d, double *EGO_array);
 void prepareStripes(size_t n, size_t d, int numStripes, double epsilon, double *array, int ** lower, int ** upper, double *self);
-static inline long long _mm512_reduce_add_epi64(__m512i a);
+static inline long long _custom_mm512_reduce_add_epi64(__m512i a);
 static inline void transpose_dx8(size_t n, size_t d, double *EGO_array);
 void omp_qsort (void* l, size_t num, size_t size, int (*compar)(const void*,const void*));
 // void test_ego_loop3_macro(size_t n, size_t d, size_t NUM_THREADS, double epsilon, double *array, size_t *countresult, int stripes, int KBLOCK, double *sorttime);
@@ -356,7 +356,7 @@ extern long long * costref;
                     allind += _mm512_srli_epi64(_mm512_castpd_si512(sum6), 63);\
                     allind += _mm512_srli_epi64(_mm512_castpd_si512(sum7), 63);\
                     allind += _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63);\
-                    if(_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
+                    if(_custom_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
                     vi = _mm512_load_pd(self + (i * EGO_blocks + k/KBLOCK) * 8);\
                     vj = _mm512_load_pd(self + (j * EGO_blocks + k/KBLOCK) * 8);\
                     sum1 += vi + _mm512_permutexvar_pd(const0, vj);\
@@ -527,7 +527,7 @@ extern long long * costref;
                             allind += _mm512_srli_epi64(_mm512_castpd_si512(sum6), 63);\
                             allind += _mm512_srli_epi64(_mm512_castpd_si512(sum7), 63);\
                             allind += _mm512_srli_epi64(_mm512_castpd_si512(sum8), 63);\
-                            if(_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
+                            if(_custom_mm512_reduce_add_epi64(allind) >= 64) {k=d+1; break;}\
                             vi = _mm512_load_pd(selfA + (i * EGO_blocks + k/KBLOCK) * 8);\
                             vj = _mm512_load_pd(selfB + (j * EGO_blocks + k/KBLOCK) * 8);\
                             sum1 += vi + _mm512_permutexvar_pd(const0, vj);\

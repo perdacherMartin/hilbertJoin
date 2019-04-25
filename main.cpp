@@ -118,8 +118,8 @@ int main(int argc, char** argv) {
     double jp_per_point = (result == 0 ) ? 0 : (double)result / n ;
 
     // HEADER:
-    printf("N;D;JPPP;THREADS;EPSILON;STRIPES;KBLOCK;TIME;ALGTIME;SORTTIME;INDEXTIME;REORDERTIME;COUNTS;LOADPERCENT;WH\n");
-    printf("%zu;%zu;%f;%zu;%2.14f;%d;%d;%f;%f;%f;%f;%f;%ld;%f;%f\n", n,d,jp_per_point, NUM_THREADS,epsilon,stripes,KBLOCK,algtime+reorderTime,algtime - sortTime,sortTime,indexTime,reorderTime,result,loadpercent,watthours);
+    // printf("N;D;JPPP;THREADS;EPSILON;STRIPES;KBLOCK;TIME;ALGTIME;SORTTIME;INDEXTIME;REORDERTIME;COUNTS;LOADPERCENT;WH\n");
+    printf("%zu;%zu;%f;%d;%2.14f;%d;%d;%f;%f;%f;%f;%f;%zu;%f;%f\n", n,d,jp_per_point, NUM_THREADS,epsilon,stripes,KBLOCK,algtime+reorderTime,algtime - sortTime,sortTime,indexTime,reorderTime,result,loadpercent,watthours);
     // freeA64(array);
     ddr_free(array);
     free(reorder_dim);

@@ -21,7 +21,7 @@ include_directories($ENV{MKLROOT}/include)
 
 # set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lboost_system")
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lboost_system -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl")
 
 # xeon-phi
 link_directories($ENV{MKLROOT}/lib/intel64)
