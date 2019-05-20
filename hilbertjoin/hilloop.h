@@ -3,6 +3,8 @@
 #define	HILLOOP_H
 
 extern const long long HILLOOP_programList[][4];
+extern const unsigned long long HILLOOP_nanoprog[9][9][4][2];
+extern const unsigned long long HILLOOP_fgfnano[4][2];
 
 #define FGF_HILBERT_FOR(i, j, imax, jmax, cond, cond2) {\
     register union {\
