@@ -41,8 +41,8 @@ typedef long long veci64 __attribute__((vector_size(64), aligned(64)));
 
 int epsilonGridCompare(const void *a, const void *b);
 void epsilonGridOrdering(size_t n, size_t d, double epsilon, double* array);
-int test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long *result);
-int test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *result);
+void test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long *result);
+void test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *result);
 inline int ceilpowtwo(int m);
 void epsilonGridFillList3(size_t n, size_t d, double epsilon, double * array, int *L1, int *L2, int *L3);
 void epsilonGridCompleteListMax(size_t n, int *list);

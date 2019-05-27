@@ -85,7 +85,7 @@ void sampleHistograms(int n, int d, double epsilon, double *array, int *reorder_
     free(histos);
 }
 
-int test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *result){
+void test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *result){
     // int KBLOCK=8;
     *result = 0l;
     long long iresult = 0l;
@@ -111,10 +111,9 @@ int test_ego_loop(size_t n, size_t d, double epsilon, double *array, long long *
     printf("count of join partners: %lld\n", iresult);
 #endif
     *result = iresult;
-
 }
 
-int test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long *result){
+void test_ego_loop3(size_t n, size_t d, double epsilon, double *array, long long *result){
     *result = 0l;
     // int KBLOCK=8;
     long long iresult=0l;
