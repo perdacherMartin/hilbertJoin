@@ -1,6 +1,5 @@
-
-["Cache-oblivious High-performance Similarity Join" - Martin Perdacher (University of Vienna); Claudia Plant (University of Vienna); Christian Böhm (Ludwig-Maximilians-Universität)](https://dl.acm.org/citation.cfm?doid=3299869.3319859)
-[SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June to 5th of July 2019.
+Paper: ["Cache-oblivious High-performance Similarity Join" - Martin Perdacher (University of Vienna); Claudia Plant (University of Vienna); Christian Böhm (Ludwig-Maximilians-Universität)](http://dx.doi.org/10.1145/3299869.3319859)
+at [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June to 5th of July 2019.
 
 # Requirements
 
