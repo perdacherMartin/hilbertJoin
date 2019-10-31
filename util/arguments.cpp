@@ -97,7 +97,7 @@ void parsing_args_join(int argc, char* argv[], size_t *n, size_t *m, double *eps
     exit(1);
   }
 
-  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:g:k:a:") ) != -1) {
+  while ( (c = getopt(argc, argv, "n:m:e:d:t:f:g:k:a:s:") ) != -1) {
 
 	if ( optarg ){
         switch(c){
