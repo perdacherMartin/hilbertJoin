@@ -21,7 +21,7 @@ include_directories($ENV{MKLROOT}/include)
 
 # set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lboost_system")
 
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=knl -mtune=knl -ffast-math -fassociative-math -O3 -fopenmp -lboost_system -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl")
+set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -std=c++11 -march=skylake-avx512 -ffast-math -fassociative-math -O3 -fopenmp -lboost_system -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -ldl")
 
 # xeon-phi
 link_directories($ENV{MKLROOT}/lib/intel64)
@@ -46,28 +46,28 @@ find_library ( mkl_omp_LIB NAMES libiomp5.a
 # and ignore the warning: "Manually-specified variables were not used by the project: CMAKE_BUID_TYPE"
 
 # set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lboost_system -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
-set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=knl -mtune=knl -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
+set(CMAKE_CXX_FLAGS_DEBUG  "-std=c++11 -march=skylake-avx512 -fpic -ffast-math -O0 -DNDDEBUG -fopenmp -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5")
 
 
 # add_executable(egoHilb ${SOURCE_FILES})
-add_executable(hilbertJoinCountOnly ${SOURCE_FILES_JOIN})
-add_executable(hilbertSelfJoinCountOnly ${SOURCE_FILES_SELF})
+add_executable(hilbertJoinCardinality ${SOURCE_FILES_JOIN})
+add_executable(hilbertSelfJoinCardinality ${SOURCE_FILES_SELF})
 
-target_compile_definitions(hilbertJoinCountOnly PRIVATE -DCOUNT_ONLY)
-target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DCOUNT_ONLY)
+target_compile_definitions(hilbertJoinCardinality PRIVATE -DCOUNT_ONLY)
+target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DCOUNT_ONLY)
 
-## for a non-verbose version comment out the next two lines
-target_compile_definitions(hilbertJoinCountOnly PRIVATE -DOUTPUT)
-target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DOUTPUT)
+## for a more verbose version comment out the next two lines
+# target_compile_definitions(hilbertJoinCardinality PRIVATE -DOUTPUT)
+# target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DOUTPUT)
 
 if ($ENV{KBLOCK})
-    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
-    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertJoinCardinality PRIVATE -DKBLOCK=$ENV{KBLOCK})
+    target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DKBLOCK=$ENV{KBLOCK})
 endif()
 
 if ($ENV{OMP_NUM_THREADS})
-    target_compile_definitions(hilbertJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
-    target_compile_definitions(hilbertSelfJoinCountOnly PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertJoinCardinality PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
+    target_compile_definitions(hilbertSelfJoinCardinality PRIVATE -DNUM_THREADS=$ENV{OMP_NUM_THREADS})
 endif()
 
 
