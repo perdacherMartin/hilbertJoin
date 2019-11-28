@@ -3,7 +3,7 @@ at [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June
 
 # Reproducability
 
-We want to make our experiments transparent and comprehensible. Code and experimental data for almost all of our figures is available: [cloud-folder](https://ucloud.univie.ac.at/index.php/s/09fYaJlKclk0Iq8).
+We want to make our experiments transparent and comprehensible. Code and experimental data for almost all of our figures is available at [cloud-folder](https://ucloud.univie.ac.at/index.php/s/09fYaJlKclk0Iq8).
 
 # Requirements
 
