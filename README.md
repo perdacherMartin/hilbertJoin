@@ -1,6 +1,10 @@
 Paper: ["Cache-oblivious High-performance Similarity Join" - Martin Perdacher (University of Vienna); Claudia Plant (University of Vienna); Christian Böhm (Ludwig-Maximilians-Universität)](http://dx.doi.org/10.1145/3299869.3319859)
 at [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June to 5th of July 2019.
 
+# Reproducability
+
+We want to make our experiments transparent and comprehensible. Code and experimental data for almost all of our figures is available: [cloud-folder](https://ucloud.univie.ac.at/index.php/s/09fYaJlKclk0Iq8).
+
 # Requirements
 
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
