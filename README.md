@@ -1,7 +1,7 @@
 Paper: ["Cache-oblivious High-performance Similarity Join" - Martin Perdacher (University of Vienna); Claudia Plant (University of Vienna); Christian Böhm (Ludwig-Maximilians-Universität)](http://dx.doi.org/10.1145/3299869.3319859)
 at [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June to 5th of July 2019.
 
-# Reproducability
+# Reproducibility
 
 We want to make our experiments transparent and comprehensible. Code and experimental data (packed with [ReproZip](https://www.reprozip.org/)) for almost all of our figures is available at our [cloud-repository](https://ucloud.univie.ac.at/index.php/s/09fYaJlKclk0Iq8).
 
