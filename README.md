@@ -5,6 +5,20 @@ at [SIGMOD-2019](http://sigmod2019.org/sigmodcfp) in Amsterdam from 30th of June
 
 We want to make our experiments transparent and comprehensible. Code and experimental data (packed with [ReproZip](https://www.reprozip.org/)) for almost all of our figures is available at our [cloud-repository](https://ucloud.univie.ac.at/index.php/s/09fYaJlKclk0Iq8).
 
+#### Download reprozip image:
+
+To download the ReproZip package in the background with the following command:
+```{bash, engine='sh'}
+wget -bqc -O hilbertJoin.rpz "https://ucloud.univie.ac.at/index.php/s/CiZpFJ7ahrf7D0C/download?path=%2F&files=hilbertJoin.rpz"
+```
+
+#### Download reprozip image:
+Alternatively you could download the .zip file using the command:
+```{bash, engine='sh'}
+wget -bqc -O hilbertJoin.zip "https://ucloud.univie.ac.at/index.php/s/CiZpFJ7ahrf7D0C/download?path=%2F&files=hilbertJoin.zip"
+
+```
+
 # Requirements
 
 - To run our Hilbert-Join your hardware needs to support AVX-512 instructions.
